@@ -1,0 +1,77 @@
+# /config/packages/recalbox.yaml
+# Par Aurélien Tomassini
+
+# Pour avoir recalbox sous forme d'une entité avec un status ON/OFF
+mqtt:
+  binary_sensor:
+    - name: "Recalbox RPI3"
+      unique_id: recalbox_console_rpi3
+      state_topic: "recalbox/notifications/status"
+      payload_on: "ON"
+      payload_off: "OFF"
+      device_class: power
+      # On passe en "indisponible" après 2h sans nouvelles
+      expire_after: 7200
+      # On récupère en JSON des attributs pour récupérer
+      # le nom du jeu, la console, l'URL de l'image, etc.
+      json_attributes_topic: "recalbox/notifications/game"
+      # On définit l'appareil ici
+      device: &recalbox_device
+        identifiers: "recalbox_rpi3_system"
+        name: "Recalbox"
+        model: "Raspberry Pi 3"
+        manufacturer: "Recalbox"
+        sw_version: "Latest" # Optionnel : version du système
+        configuration_url: "http://recalbox.local" # Lien direct vers l'interface web
+        
+  # On crée des boutons pour éteindre/redémarrer la recalbox.
+  button:
+  - name: "Eteindre Recalbox"
+    unique_id: eteindre_recalbox_btn
+    icon: mdi:power-off
+    device: *recalbox_device
+    command_topic: "recalbox/commands/shutdown"
+  - name: "Reboot Recalbox"
+    unique_id: reboot_recalbox_btn
+    icon: mdi:restart
+    device: *recalbox_device
+    command_topic: "recalbox/commands/reboot"
+
+    
+automation:
+# Pour forcer le passage à OFF, on crée une petite automatisation interne
+  - alias: "Recalbox Feedback Extinction"
+    trigger:
+      # On détecte quand l'ordre d'extinction est envoyé par le bouton
+      - platform: mqtt
+        topic: "recalbox/commands/shutdown"
+    action:
+      # On force immédiatement le statut à OFF dans MQTT
+      - service: mqtt.publish
+        data:
+          topic: "recalbox/notifications/status"
+          payload: "OFF"
+          retain: true
+          
+# Pour convertir les actions MQTT en appel REST
+  - alias: Lien Boutons MQTT vers REST
+    description: Nécessaire pour faire fonctionner les boutons de reboot/shutdown de recalbox
+    actions:
+      - action: rest_command.{{ trigger.topic.split('/')[-1] }}_recalbox
+    triggers:
+      - topic: recalbox/commands/shutdown
+        trigger: mqtt
+      - topic: recalbox/commands/reboot
+        trigger: mqtt
+
+    
+
+# Eteindre la recalbox : recalbox.local == 192.168.1.147
+rest_command:
+  shutdown_recalbox:
+    url: "http://recalbox.local/api/system/shutdown"
+    method: POST
+  reboot_recalbox:
+    url: "http://recalbox.local/api/system/reboot"
+    method: POST
+    
