@@ -75,7 +75,11 @@ rest_command:
     method: POST
     
 
-# Pour les commandes intelligentes : voix/texte
+
+# ----- Assistant
+
+
+# Pour les commandes intelligentes ON OFF : voix/texte
 template:
 - switch:
   - unique_id: switch_recalbox_assist
@@ -91,3 +95,19 @@ template:
     #default_entity_id: switch.recalbox_global
     name: Recalbox
     state: "{{ is_state('binary_sensor.recalbox_rpi3', 'on') }}"
+
+
+# Pour les infos sur le jeu en cours
+intent_script:
+  RecalboxGameStatus:
+    speech:
+      text: >
+        {% set game = state_attr('binary_sensor.recalbox_rpi3', 'game') %}
+        {% set system = state_attr('binary_sensor.recalbox_rpi3', 'console') %}
+        {% if is_state('binary_sensor.recalbox_rpi3', 'on') and game %}
+          Tu joues à {{ game }} sur {{ system }}.
+        {% elif is_state('binary_sensor.recalbox_rpi3', 'on') %}
+          La Recalbox est allumée, mais aucun jeu n'est lancé.
+        {% else %}
+          La Recalbox est actuellement éteinte.
+        {% endif %}

@@ -38,7 +38,8 @@ Two buttons can also be used to stop/reboot the recalbox via Home Assistant.
 
 1. **Recalbox**
    
-   - Copy the file `home_assistant_notifier.sh` il the `userscripts` Recalbox folder. This script will react to Recabox events :
+   - Copy the file `Recalbox/userscripts/home_assistant_notifier.sh` in the `userscripts` Recalbox folder.
+     This script will react to Recabox events :
      
      - `start`|`systembrowsing`|`endgame `: refreshes the status ON, no game
      
@@ -175,3 +176,22 @@ It allows to control the Recalbox as a switch, and use assist to turn OFF recalb
 Example : "Eteins Recalbox" will turn off the Recalbox.
 
 
+### Get current game with text/voice command
+
+- Create file `/config/custom_sentences/<language>/recalbox_intent.yaml`, with `RecalboxGameStatus` intent.
+Example in `custom_sentences/fr/recalbox_intent.yaml` :
+
+```yaml
+language: "fr"
+intents:
+  RecalboxGameStatus:
+    data:
+      - sentences:
+          - "quel est le jeu en cours [sur recalbox]"
+          - "à quoi je joue [sur recalbox]"
+          - "qu'est-ce qui tourne sur la recalbox"
+          - "quel jeu est lancé [sur recalbox]"
+          - "quel est le jeu lancé [sur recalbox]"
+```
+
+![](currentGameAssist.png)
