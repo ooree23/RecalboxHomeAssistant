@@ -74,6 +74,16 @@ rest_command:
     url: "http://recalbox.local/api/system/reboot"
     method: POST
     
+  # Récupère les roms d'une console précise
+  recalbox_get_roms:
+    url: "http://recalbox.local:81/api/systems/{{ console }}/roms"
+    method: GET
+  
+  recalbox_launch_game:
+    url: "http://recalbox.local:81/api/systems/{{ console }}/launcher"
+    method: POST
+    payload: "{{ path }}"
+    content_type: "text/plain"
 
 
 # ----- Assistant
@@ -111,3 +121,111 @@ intent_script:
         {% else %}
           La Recalbox est actuellement éteinte.
         {% endif %}
+
+
+  # Pour lancer un jeu par la voix
+  RecalboxLaunchGame:
+    action:
+      - action: script.recalbox_search_and_launch
+        data:
+          game_name: "{{ game }}"
+          console_id: "{{ console }}"
+        response_variable: script_output
+      - stop: "Return value to intent script"
+        response_variable: script_output
+    speech:
+      text: >
+        {% set resp = action_response %}
+        {% if resp is not none %}
+            {{ resp.result }}
+        {% elif not is_state('binary_sensor.recalbox_rpi3', 'on') %}
+          La recalbox ne semble pas allumée, ou pas accessible.
+        {% else %}
+          Une erreur imprévue est survenue pendant l'exécution du script.
+          Aucun status n'a été reçu du script de recherche. ({{ resp }})
+        {% endif %}
+
+script:
+  recalbox_search_and_launch:
+    mode: restart
+    sequence:
+    
+      - variables:
+          final_msg: "Erreur inconnue"
+          final_success: "false"
+    
+      - if:
+          - condition: not
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.recalbox_rpi3
+                state: "on"
+        then:
+          - variables:
+              reponse_finale: 
+                success: false
+                result: La Recalbox semble ne pas être allumée, ou non détectée. Assurez-vous de la voir connectée à Home Assistant pour la contrôler.
+          - stop: "Recalbox is OFF"
+            response_variable: reponse_finale
+          
+      # lister toutes les roms de la console
+      - action: rest_command.recalbox_get_roms
+        data:
+          console: "{{ console_id }}"
+        response_variable: rom_list
+        continue_on_error: true # Permet de ne pas stopper le script si l'API échoue
+
+      - if:
+          - condition: template
+            value_template: "{{ rom_list is not defined or rom_list['status'] != 200 }}"
+        then:
+          - variables:
+              reponse_finale: 
+                success: false
+                result: "Impossible de récupérer la liste des jeux de {{ console_id }} actuellement (réponse de l'API : code HTTP {{ rom_list['status'] }})."
+          - stop: "Cannot get Roms list"
+            response_variable: reponse_finale
+        
+      - variables:
+          search_pattern: "{{ game_name | replace(' ', ' .*') }}"
+          # rom_list contient un tableau "roms"
+          # dans lequel on va chercher si une rom a dans son "name" le nom du jeu à lancer.
+          # si on le trouve, on récupère l'objet target_game qui contient le chemin vers la rom "target_game.path"
+          target_game: >
+            {% if rom_list.content is defined and rom_list.content.roms is defined %}
+              {{ rom_list.content.roms | selectattr('name', 'search', search_pattern, ignorecase=True) | first | default(none) }}
+            {% else %}
+              none
+            {% endif %}
+
+      - if:
+          - condition: template
+            value_template: "{{ target_game is not none }}"
+        then:
+          - action: rest_command.recalbox_launch_game
+            data:
+              console: "{{ console_id }}"
+              path: "{{ target_game.path }}"
+            continue_on_error: true # Permet de ne pas stopper le script si l'API échoue
+            response_variable: launch_result
+          - variables:
+              final_success: "{{ launch_result is defined and launch_result['status'] == 200 }}"
+              final_msg: > 
+                {% if final_success == 'True' %}
+                  Le jeu {{ target_game.name }} a été trouvé et lancé sur {{ console_id }}.
+                {% else %}
+                  Le jeu {{ target_game.name }} a bien été trouvé sur {{ console_id }}, mais n'a malheureusement pas pu être lancé sur la Recalbox par son API.
+                {% endif %}
+        else:
+          - variables:
+              final_success: "false"
+              final_msg: Le jeu {{ game_name }} n'a pas été trouvé sur {{ console_id }}
+                
+                
+      - variables:
+          reponse_finale: 
+            success: "{{ final_success }}"
+            result: "{{ final_msg }}"
+      - stop: "Fin du script de recherche"
+        response_variable: reponse_finale
+        
