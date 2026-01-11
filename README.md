@@ -197,3 +197,16 @@ intents:
 ```
 
 ![](currentGameAssist.png)
+
+
+### Select a game with assistant
+
+- Update the systems list in `/config/custom_sentences/fr/recalbox_intent.yaml` with the consoles you want to support in the launch command.
+  By default, it supports launching command on NES, SNES, Megadrive, PSX, N64, GB, GBA, GBC, Dreamcast, PSP.
+  The search ignores case, and can find roms with words in between your search.
+  Example : Searching for "Pokemon Jaune", can find the rom "Pokemon - Version Jaune - Edition Speciale Pikachu".
+  
+  Query examples :
+  - "Recalbox lance Pokemon Jaune sur Game Boy"
+  - "Joue à Mario 64 sur la Nintendo 64 sur Recalbox"
+  - "Lance Sonic 1 sur megadrive"

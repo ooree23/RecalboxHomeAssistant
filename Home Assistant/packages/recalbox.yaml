@@ -74,6 +74,16 @@ rest_command:
     url: "http://recalbox.local/api/system/reboot"
     method: POST
     
+  # Récupère les roms d'une console précise
+  recalbox_get_roms:
+    url: "http://recalbox.local:81/api/systems/{{ console }}/roms"
+    method: GET
+  
+  recalbox_launch_game:
+    url: "http://recalbox.local:81/api/systems/{{ console }}/games/launch"
+    method: POST
+    payload: '{"path": "{{ path }}"}'
+    content_type: "application/json"
 
 
 # ----- Assistant
@@ -111,3 +121,64 @@ intent_script:
         {% else %}
           La Recalbox est actuellement éteinte.
         {% endif %}
+
+
+  # Pour lancer un jeu par la voix
+  RecalboxLaunchGame:
+    action:
+      - action: script.recalbox_search_and_launch
+        data:
+          game_name: "{{ game }}"
+          console_id: "{{ console }}"
+        response_variable: script_output
+    speech:
+      text: >
+        {% if script_output is defined %}
+          {{ script_output.result_message }}
+        {% else %}
+          Une erreur est survenue lors de la recherche du jeu sur Recalbox.
+        {% endif %}
+
+script:
+  recalbox_search_and_launch:
+    mode: restart
+    sequence:
+      # 1 ; lister toutes les roms de la console
+      - action: rest_command.recalbox_get_roms
+        data:
+          console: "{{ console_id }}"
+        response_variable: rom_list
+
+      - variables:
+          search_pattern: "{{ game_name | replace(' ', '.*') }}"
+          # rom_list contient un tableau "roms"
+          # dans lequel on va chercher si une rom a dans son "name" le nom du jeu à lancer.
+          # si on le trouve, on récupère l'objet target_game qui contient le chemin vers la rom "target_game.path"
+          target_game: >
+            {% if rom_list.content is defined and rom_list.content.roms is defined %}
+              {{ rom_list.content.roms | selectattr('name', 'search', search_pattern, ignorecase=True) | first | default(none) }}
+            {% else %}
+              none
+            {% endif %}
+            
+      - variables:
+          final_msg: >
+            {% if target_game is not none %}
+              Je lance {{ target_game.name }} sur {{ console_id }}.
+            {% else %}
+              Impossible de trouver {{ game_name }} sur {{ console_id }}.
+            {% endif %}
+
+      - if:
+          - condition: template
+            value_template: "{{ target_game is not none }}"
+        then:
+          - action: rest_command.recalbox_launch_game
+            data:
+              console: "{{ console_id }}"
+              path: "{{ target_game.path }}"
+          - stop: "Game found"
+            response_variable: final_msg
+        else:
+          - stop: "Game not found"
+            response_variable: final_msg

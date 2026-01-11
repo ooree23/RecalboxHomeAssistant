@@ -1,3 +1,7 @@
+# /config/custom_sentences/fr/recalbox_intent.yaml
+# Par Aurélien Tomassini
+
+
 language: "fr"
 intents:
   RecalboxGameStatus:
@@ -5,7 +9,56 @@ intents:
       - sentences:
           - "quel est le jeu en cours [sur recalbox]"
           - "à quoi je joue [sur recalbox]"
-          - "qu'est-ce qui tourne sur la recalbox"
+          - "qu'est-ce qui tourne sur [la] recalbox"
           - "quel jeu est lancé [sur recalbox]"
           - "quel esl le jeu lancé [sur recalbox]"
+  RecalboxLaunchGame:
+    data:
+      - sentences:
+          - "joue à {game} sur [la] {console} sur recalbox"
+          - "lance {game} sur [la] {console}"
+          - "recalbox lance {game} sur [la] {console}"
           
+lists:
+  game:
+    wildcard: true
+  console:
+    values:
+      - in: "super nintendo"
+        out: "snes"
+      - in: "super nes"
+        out: "snes"
+      - in: "nes"
+        out: "nes"
+      - in: "nintendo"
+        out: "nes"
+      - in: "megadrive"
+        out: "megadrive"
+      - in: "genesis"
+        out: "megadrive"
+      - in: "sega"
+        out: "megadrive"
+      - in: "ssega megadrive"
+        out: "megadrive"
+      - in: "game boy"
+        out: "gb"
+      - in: "game boy color"
+        out: "gbc"
+      - in: "game boy advance"
+        out: "gba"
+      - in: "play"
+        out: "psx"
+      - in: "playstation"
+        out: "psx"
+      - in: "playstation 1"
+        out: "psx"
+      - in: "p s x"
+        out: "psx"
+      - in: "n 64"
+        out: "n64"
+      - in: "nintento 64"
+        out: "n64"
+      - in: "dreamcast"
+        out: "dreamcast"
+      - in: "psp"
+        out: "psp"
