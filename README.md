@@ -2,7 +2,24 @@
 
 By Aurélien Tomassini, 2026.
 
-![](example.png)
+![](RecalboxHomeAssistantIntegration.png)
+
+<!-- Use "markdown-toc -i README.md --maxdepth 3" to auto update table of content -->
+<!-- (if not installed yet, run "npm install --save markdown-toc -g") -->
+
+<!-- toc -->
+
+- [Features](#features)
+- [Context](#context)
+- [Installation](#installation)
+- [Usage](#usage)
+  * [Add Recalbox status to dashboard](#add-recalbox-status-to-dashboard)
+  * [Automation when a game is launched](#automation-when-a-game-is-launched)
+  * [Turn OFF recalbox with text/voice command](#turn-off-recalbox-with-textvoice-command)
+  * [Get current game with text/voice command](#get-current-game-with-textvoice-command)
+  * [Launch a game from text/voice assistant](#launch-a-game-from-textvoice-assistant)
+
+<!-- tocstop -->
 
 <!-- Use "markdown-toc -i README.md --maxdepth 3" to auto update table of content -->
 <!-- (if not installed yet, run "npm install --save markdown-toc -g") -->
