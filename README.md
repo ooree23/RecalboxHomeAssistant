@@ -216,7 +216,7 @@ intents:
 ![](currentGameAssist.png)
 
 
-### Select a game with assistant
+### Launch a game from text/voice assistant
 
 > NOTE : on January 12th, with Recalbox 9.2.3, I didnt find an uptodate API to launch a game.
 > The one I had need to be updated, because not working :
@@ -225,6 +225,15 @@ intents:
 > > method: POST
 > > payload: "{{ path }}"
 > > content_type: "text/plain"
+
+> Because of non existing APi to launch a game, we need to launch the game via SSH.
+> It means that Home Assistant needs access to Recalbox via SSH.  
+> - Install "Advanced SSH & Web Terminal" in Home Assistant
+> - Type "ssh-keygen -t rsa -b 4096"
+> - Your keys will be sotred in /config/.ssh/id_rsa
+> - Type "ssh-copy-id -i /config/.ssh/id_rsa.pub root@recalbox.local" (default credentials on Recalbox are "root" / "recalboxroot")
+> - Verify in the terminal that the SSH connexion is good, without asking you the password anymore : "ssh -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no root@recalbox.local"
+> - Type "exit"
 
 - Copy/get the intent RecalboxLaunchGame for game launch in `custom_sentences/fr/recalbox_intent.yaml` :
 ```yaml
