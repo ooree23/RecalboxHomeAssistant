@@ -78,19 +78,19 @@ automation:
 rest_command:
   shutdown_recalbox:
     url: >
-        {% set base = *recalbox_url %}
+        {% set base = device_attr('binary_sensor.recalbox_rpi3', 'configuration_url') %}
         {{ base }}/api/system/shutdown
     method: POST
   reboot_recalbox:
     url: >
-        {% set base = *recalbox_url %}
+        {% set base = device_attr('binary_sensor.recalbox_rpi3', 'configuration_url') %}
         {{ base }}/api/system/reboot
     method: POST
     
   # Récupère les roms d'une console précise
   recalbox_get_roms:
     url: >
-        {% set base = *recalbox_url %}
+        {% set base = device_attr('binary_sensor.recalbox_rpi3', 'configuration_url') %}
         {{ base }}:81/api/systems/{{ console }}/roms
     method: GET
   
@@ -110,7 +110,7 @@ rest_command:
 # https://gitlab.com/recalbox/recalbox/-/tree/master/projects/configgen/
 shell_command:
   recalbox_launch_game_ssh: >
-    {% set base = *recalbox_url %}
+    {% set base = device_attr('binary_sensor.recalbox_rpi3', 'configuration_url') %}
     {# On retire le http:// pour n'avoir que recalbox.local #}
     {% set host = base.replace('http://', '').replace('https://', '') %}
     ssh -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@{{ host }} "recalbox-config launch {{ console }} '{{ path }}'"
