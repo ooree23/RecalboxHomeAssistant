@@ -114,7 +114,7 @@ shell_command:
     {% set base = device_attr('binary_sensor.recalbox_rpi3', 'configuration_url') %}
     {# On retire le http:// pour n'avoir que recalbox.local #}
     {% set host = base.replace('http://', '').replace('https://', '') %}
-    ssh -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@{{ host }} "recalbox-config launch {{ console }} '{{ path }}'"
+    ssh -i /config/.ssh/recalboxHomeAssistantKey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@{{ host }} "recalbox-config launch {{ console }} '{{ path }}'"
 
 
 # ----- Assistant
