@@ -115,7 +115,7 @@ shell_command:
     {% set base = device_attr('binary_sensor.recalbox_rpi3', 'configuration_url') %}
     {% set host = base.replace('http://', '').replace('https://', '').split(':')[0] if base is not none else 'recalbox.local' %}
     
-    false # Pas d'impléemntation fiable pour le moment
+    false # Pas d'implémentation fiable pour le moment
     
     # ssh -i /config/.ssh/recalboxHomeAssistantKey -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@{{ host }} 
     # "ROM='{{ path }}'; 

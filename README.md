@@ -164,6 +164,8 @@ intents:
 
 ### Launch a game from text/voice assistant
 
+> SSH launch NOT WORKING YET !
+
 > Because of non existing APi to launch a game, we need to launch the game via SSH.
 > It means that Home Assistant needs access to Recalbox via SSH.  
 > - Enable "Advanced mode" for your user
