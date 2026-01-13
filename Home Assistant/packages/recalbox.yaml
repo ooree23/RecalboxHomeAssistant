@@ -6,19 +6,20 @@ homeassistant:
   customize:
     _recalbox_hw: &recalbox_hardware "Raspberry Pi 3 B+"
     _recalbox_sw: &recalbox_sw_version "9.2.3-PULSAR"
-    _recalbox_name: &recalbox_name "Recalbox RPI3"
+    _recalbox_name: &recalbox_name "Recalbox"
     _recalbox_url: &recalbox_url "http://recalbox.local"
     
 
 # Pour avoir recalbox sous forme d'une entité avec un status ON/OFF
 mqtt:
   binary_sensor:
-    - name: *recalbox_name
+    - name: "Recalbox RPI3"
       unique_id: recalbox_console_rpi3
       state_topic: "recalbox/notifications/status"
       payload_on: "ON"
       payload_off: "OFF"
-      device_class: power
+      device_class: running
+      icon: mdi:gamepad-variant-outline
       # On passe en "indisponible" après 2h sans nouvelles
       expire_after: 7200
       # On récupère en JSON des attributs pour récupérer
@@ -27,7 +28,7 @@ mqtt:
       # On définit l'appareil ici
       device: &recalbox_device
         identifiers: "recalbox_rpi3_system"
-        name: "Recalbox"
+        name: *recalbox_name
         model: *recalbox_hardware
         manufacturer: "Recalbox"
         sw_version: *recalbox_sw_version
