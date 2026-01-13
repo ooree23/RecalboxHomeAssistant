@@ -18,7 +18,7 @@ By Aurélien Tomassini, 2026.
   * [Turn OFF recalbox with text/voice command](#turn-off-recalbox-with-textvoice-command)
   * [Get current game with text/voice command](#get-current-game-with-textvoice-command)
   * [Launch a game from text/voice assistant](#launch-a-game-from-textvoice-assistant)
-  * [screenshot](#screenshot)
+  * [Take a screenshot](#take-a-screenshot)
 - [Todo](#todo)
 - [Releases notes](#releases-notes)
   * [v0.0.2 - In progress...](#v002---in-progress)
@@ -216,9 +216,9 @@ intents:
 
 
 
-### screenshot
+### Take a screenshot
 
-You can make a screejn shot simply push the screen shot button on your dashboard.
+You can make a game screenshot, simply pushing the screenshot button on your dashboard.
 
 You can also make a screen shot via Assist, typing or saying "Prends une capture d'écran du jeu", for example.
 Once again, use the exampes in [custom_sentences/fr/recalbox_intent.yaml](Home%20Assistant/custom_sentences/fr/recalbox_intent.yaml), for the `RecalboxCreateSnapshot` intent.
