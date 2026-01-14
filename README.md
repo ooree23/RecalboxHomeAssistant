@@ -243,6 +243,7 @@ Once again, use the exampes in [custom_sentences/fr/recalbox_intent.yaml](Home%2
 - Add `recalboxVersion` and `hardware` in the MQTT message sent to Home Assistant. So HA can know the OS version and device of Recalbox.
 - Update the recalbox_card example with actual Recabox version and hardware
 - Recalbox now sends messages to MQTT in retain mode for the attributes (and then remember the recabox version and hardware)
+- Add 2 sensors sensor.recalbox_hardware and sensor.recalbox_firmware_version to persist values
 - Add screen shot button
 - Add screen shot action via assist (text or voice)
 - Add SSH installation info to launch a game
