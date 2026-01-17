@@ -119,7 +119,12 @@ If any of the services doenst work as exptected (like scteen shot on Raspberry P
 
 You can also create automations, triggered when a game is launched for example.  
 If interested in this example, copy [recalbox_automations.yaml](Home%20Assistant/automations/recalbox_automations.yaml) into `/config/automations/recalbox_automations.yaml`
-and then add `automation split: !include_dir_list automations/` in `configuration.yaml`, to allow Home Assistant to read yaml files in `automations` subfolder.
+and then add
+```yaml
+automation: !include automations.yaml
+automation yaml: !include_dir_merge_list automations/
+```
+in `configuration.yaml`, to allow Home Assistant to read yaml files in `automations` subfolder.
 
 
 ### Assist (text/voice)
