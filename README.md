@@ -88,19 +88,7 @@ Assist integration for voice/text control has also been implemented in order to 
      homeassistant:
          packages: !include_dir_named packages
      ```
- 
-3. **SSH for Home Assistant to access Recalbox**
 
-
-Some Recalbox API are not existing (launch a game, for example). We can still execute some features with scripts over SSH.
-It means that Home Assistant needs access to Recalbox via SSH if you want to access those features.  
-- Enable "Advanced mode" for your user
-- Install "Terminal & SSH" in Home Assistant : enable watchdog and sidebar. Go to settings and import a public key or define a password, and then save and restart the addon.
-- Type "ssh-keygen -t rsa -b 4096", name it "/config/.ssh/recalboxHomeAssistantKey" (create folder /config/.ssh if needed)
-- Your keys will then be sotred in /config/.ssh/recalboxHomeAssistantKey
-- Type "ssh-copy-id -i /config/.ssh/recalboxHomeAssistantKey.pub root@recalbox.local" (default credentials on Recalbox are "root" / "recalboxroot")
-- Verify in the terminal that the SSH connexion is good, without asking you the password anymore : "ssh -i /config/.ssh/recalboxHomeAssistantKey -o StrictHostKeyChecking=no root@recalbox.local"
-- Type "exit"
 
 
 ## Usage 
@@ -163,9 +151,6 @@ Examples :
 
 #### Launch a game
 
-> SSH access is required. 
-> Launch via SSH is NOT WORKING YET !
-
 This requires the `RecalboxLaunchGame` intent in `/config/custom_sentences/<language>/recalbox_intent.yaml`.
 
 Examples :
@@ -182,7 +167,6 @@ Examples :
 > 
 > The search ignores case, and can find roms with words in between your search.
 > Example : Searching for "Pokemon Jaune", can find the rom "Pokemon - Version Jaune - Edition Speciale Pikachu".
-
 
 
 
