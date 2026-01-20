@@ -12,7 +12,7 @@ intents:
           - "qu'est-ce qui tourne sur [la] recalbox"
           - "quel jeu est lancé [sur recalbox]"
           - "quel est le jeu lancé [sur recalbox]"
-  RecalboxCreateSnapshot:
+  RecalboxCreateScreenshot:
     data:
       - sentences:
           - "(fais | prends) (une capture | un screenshot) [d'écran] [du jeu] [sur recalbox]"
@@ -25,6 +25,10 @@ intents:
     data:
       - sentences:
           - "(arrête | stop | quitte) le jeu (actuel | en cours) [sur recalbox]"
+  RecalboxPauseGame:
+    data:
+      - sentences:
+          - "(mets en pause | reprends | arrête la pause) le jeu (actuel | en cours) [sur recalbox]"
           
 lists:
   game:

@@ -171,6 +171,9 @@ Examples :
 
 #### Stop running a game
 
+> This uses a retroarch UDP command.  
+> It requires to set `network_cmd_enable = true` in `retroarch.cfg`, as [documented in the Recalbox Wiki / GPIO](https://wiki.recalbox.com/en/tutorials/network/send-commands-to-emulators-with-gpio).
+
 This requires the `RecalboxStopGame` intent in `/config/custom_sentences/<language>/recalbox_intent.yaml`.
 
 Examples :
@@ -179,7 +182,7 @@ Examples :
 
 #### Take a screenshot
 
-This requires the `RecalboxCreateSnapshot` intent in `/config/custom_sentences/<language>/recalbox_intent.yaml`.
+This requires the `RecalboxCreateScreenshot` intent in `/config/custom_sentences/<language>/recalbox_intent.yaml`.
 
 You can make a game screenshot, simply pushing the screenshot button on your dashboard.  
 You can also make a screenshot via Assist, typing or saying "Prends une capture d'écran du jeu", for example.
