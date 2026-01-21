@@ -36,7 +36,7 @@ mqtt:
   button:
   - name: "Shutdown"
     unique_id: eteindre_recalbox_btn
-    icon: mdi:power-off
+    icon: mdi:power
     device: *recalbox_device
     command_topic: "recalbox/commands/shutdown"
   - name: "Reboot"
@@ -113,10 +113,10 @@ rest_command:
 # Lancement d'un jeu par commande UDP :
 # https://wiki.recalbox.com/en/tutorials/network/send-commands-to-emulators-with-gpio
 shell_command:
-  recalbox_launch_game_upd: /bin/sh -c "printf 'START|{{ console }}|{{ path }}' | nc -u -w1 recalbox.local 1337"
-  recalbox_stop_game_upd: /bin/sh -c "printf 'QUIT' | nc -u -w1 recalbox.local 55355"
-  recalbox_screenshot_upd: /bin/sh -c "printf 'SCREENSHOT' | nc -u -w1 recalbox.local 55355"
-  recalbox_pause_upd: /bin/sh -c "printf 'PAUSE_TOGGLE' | nc -u -w1 recalbox.local 55355"
+  recalbox_launch_game_udp: /bin/sh -c "printf 'START|{{ console }}|{{ path }}' | nc -u -w1 recalbox.local 1337"
+  recalbox_stop_game_udp: /bin/sh -c "printf 'QUIT' | nc -u -w1 recalbox.local 55355"
+  recalbox_screenshot_udp: /bin/sh -c "printf 'SCREENSHOT' | nc -u -w1 recalbox.local 55355"
+  recalbox_pause_udp: /bin/sh -c "printf 'PAUSE_TOGGLE' | nc -u -w1 recalbox.local 55355"
 
 
 # ----- Assistant
@@ -146,7 +146,7 @@ template:
     # device: *recalbox_device
     icon: mdi:camera
     press:
-      - action: rest_command.screenshot_recalbox
+      - action: script.recalbox_take_screenshot
       - action: notify.persistent_notification
         data:
           message: "Capture d'écran Recalbox effectuée !"
@@ -210,7 +210,7 @@ intent_script:
   # Pour arrêter le jeu par la voix
   RecalboxStopGame:
     action:
-      - action: shell_command.recalbox_stop_game_upd
+      - action: shell_command.recalbox_stop_game_udp
         response_variable: script_output
       - stop: "Return value to intent script"
         response_variable: script_output
@@ -228,7 +228,7 @@ intent_script:
   # Pour mettre en pause le jeu par la voix
   RecalboxPauseGame:
     action:
-      - action: shell_command.recalbox_pause_upd
+      - action: shell_command.recalbox_pause_udp
         response_variable: script_output
       - stop: "Return value to intent script"
         response_variable: script_output
@@ -246,15 +246,17 @@ intent_script:
   # Pour lancer un jeu par la voix
   RecalboxCreateScreenshot:
     action:
-      - action: rest_command.screenshot_recalbox
+      - action: script.recalbox_take_screenshot
         response_variable: script_output
       - stop: "Return value to intent script"
         response_variable: script_output
     speech:
       text: >
         {% set resp = action_response %}
-        {% if resp is not none %}
+        {% if resp is not none and resp.success=="true" %}
           Une capture d'écran a été faite et enregistée dans /recalbox/share/screenshots/
+        {% elif resp is not none and resp.success!="true" %}
+          Une erreur est survenue lors de la demande de capture d'écran. {{ resp.result }}
         {% elif not is_state('binary_sensor.recalbox_rpi3', 'on') %}
           La recalbox ne semble pas allumée, ou pas accessible.
         {% else %}
@@ -262,8 +264,41 @@ intent_script:
         {% endif %}
 
 script:
+  recalbox_take_screenshot:
+    alias: "Logique Screenshot Recalbox (UDP puis API)"
+    sequence:
+      - variables:
+          final_msg: "Erreur inconnue"
+          final_success: "false"
+      - # name: "Tentative via UDP"
+        action: shell_command.recalbox_screenshot_udp
+        continue_on_error: true
+        response_variable: udp_result
+
+      - # name: "Vérification et Fallback API"
+        if:
+          # On vérifie si l'UDP a échoué (returncode != 0)
+          - condition: template
+            value_template: "{{ udp_result is not defined or udp_result.returncode != 0 }}"
+        then:
+          - action: rest_command.screenshot_recalbox
+          - variables:
+              final_success: "true"
+              final_msg: Screenshot réussi (par API)
+        else:
+          - variables:
+              final_success: "true"
+              final_msg: Screenshot réussi (par UDP)
+
+      - variables:
+          reponse_finale:
+            success: "{{ final_success }}"
+            result: "{{ final_msg }}"
+      - stop: "Fin du script de screenshot"
+        response_variable: reponse_finale
   recalbox_search_and_launch:
     mode: restart
+    alias: "Recherche d'un jeu (API) et lancement (UDP)"
     sequence:
     
       - variables:
@@ -320,7 +355,7 @@ script:
           - condition: template
             value_template: "{{ target_game is not none }}"
         then:
-          - action: shell_command.recalbox_launch_game_upd
+          - action: shell_command.recalbox_launch_game_udp
             data:
               console: "{{ console_id }}"
               path: "{{ target_game.path }}"

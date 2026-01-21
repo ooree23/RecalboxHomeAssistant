@@ -217,14 +217,14 @@ You can also make a screenshot via Assist, typing or saying "Prends une capture 
 ## Todo
 
 - [ ] Internationalization
-- [ ] Screenshots : switch from API usage to retroarch, to see if it gets better results on RPI3B+
 
 
 ## Releases notes
 
 ### v0.0.3 - Work in progress...
 
-- ...
+- New screenshot script : it first tries a UDP screenshot. If failed, then it tries a screenshot via API.  
+  Used both for voice/text command, and button pressed.
 
 
 ### v0.0.2 - 20/01/2026
