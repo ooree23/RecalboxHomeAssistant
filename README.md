@@ -13,7 +13,7 @@ By Aurélien Tomassini, 2026.
 > - Trigger any automation you want.  
 >   For example, change light color according to the game launched, send notifications, etc.
 > - Voice/text commands with assistant :
->   - Launch a game
+>   - Launch a game by its title (full or partial title search)
 >   - Ask what is the current game
 >   - Stop current game
 >   - Take a screenshot
