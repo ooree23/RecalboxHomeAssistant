@@ -32,12 +32,12 @@ class RecalboxEntityMQTT(BinarySensorEntity):
     def device_info(self):
         return {
             "identifiers": {(DOMAIN, self._config_entry.entry_id)},
-            "name": "Recalbox ({self._ip})",
+            "name": f"Recalbox ({self._ip})",
             "manufacturer": "Aurelien Tomassini",
             "model": "Recalbox OS",
-            "sw_version": self._attr_extra_state_attributes.get("recalboxVersion", "Inconnu"),
             "configuration_url": f"http://{self._ip}",
-            "hw_version": self._attr_extra_state_attributes.get("hardware", "Rpi/PC"),
+            "sw_version": self._attr_extra_state_attributes.get("recalboxVersion", "-"),
+            "hw_version": self._attr_extra_state_attributes.get("hardware", "-"),
         }
 
     @property
@@ -47,6 +47,8 @@ class RecalboxEntityMQTT(BinarySensorEntity):
             **self._attr_extra_state_attributes, # Les persistants (version, hw)
             "game": self.game,
             "console": self.console,
+            "genre": self.genre,
+            "genreId": self.genreId,
             "rom": self.rom,
             "imageUrl": self.imageUrl
         }
@@ -57,7 +59,7 @@ class RecalboxEntityMQTT(BinarySensorEntity):
         async def message_received(msg):
             """Logique lors de la réception d'un message MQTT."""
             topic = msg.topic
-            payload = msg.payload.decode("utf-8")
+            payload = msg.payload
 
             # 1. Gestion du Status (ON/OFF)
             if topic == "recalbox/notifications/status":
@@ -81,6 +83,17 @@ class RecalboxEntityMQTT(BinarySensorEntity):
                         "hardware": data.get("hardware"),
                         "recalboxVersion": data.get("recalboxVersion")
                     })
+
+                    # /!\ IMPORTANT :
+                    # On signale à HA que les infos du device ont pu changer
+                    from homeassistant.helpers import device_registry as dr
+                    device_registry = dr.async_get(self.hass)
+                    device_registry.async_update_device(
+                        self.device_entry_id,
+                        sw_version=data.get("recalboxVersion"),
+                        model=data.get("hardware")
+                    )
+
                 except json.JSONDecodeError:
                     pass
 
@@ -90,6 +103,7 @@ class RecalboxEntityMQTT(BinarySensorEntity):
         # Abonnement au topic
         await async_subscribe(self.hass, "recalbox/notifications/status", message_received)
         await async_subscribe(self.hass, "recalbox/notifications/game", message_received)
+        print("Abonnement à recalbox/notifications/status et recalbox/notifications/game")
 
 
     # Exemple : Action appelée par un service ou un bouton

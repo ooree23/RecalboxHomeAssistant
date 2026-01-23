@@ -2,7 +2,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 from .const import DOMAIN
 from .api import RecalboxAPI
-from .intent import async_setup_intents # Pour charger tes phrases Assist
+from homeassistant.components.http import StaticPathConfig
+from .intent import async_setup_intents # Pour charger les phrases Assist
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     host = entry.data.get("host")
@@ -19,12 +20,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # On enregistre les phrases Assist
     await async_setup_intents(hass)
 
-    # Enregistre le dossier www pour qu'il soit accessible via /recalbox/
-    hass.http.register_static_path(
-        "/recalbox",
-        hass.config.path("custom_components/recalbox/www"),
-        cache_headers=False
-    )
+    # enregistrement du chemin statique
+    hass.http.async_register_static_paths([
+        StaticPathConfig(
+            url_path="/recalbox",
+            local_path=hass.config.path("custom_components/recalbox/www"),
+            cache_headers=False
+        )
+    ])
 
     return True
 

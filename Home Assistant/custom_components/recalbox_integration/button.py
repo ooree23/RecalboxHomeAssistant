@@ -17,11 +17,14 @@ class RecalboxAPIButton(ButtonEntity):
         self._port = port
         self._attr_name = f"Recalbox {name}"
         self._attr_icon = icon
+        self._name = name
 
     async def async_press(self):
         # On envoie l'ordre API
         await self._api.post_api(self._path, self._port)
         # On peut même forcer le binaire à OFF ici pour le feedback immédiat !
+        # if self._name == "Shutdown":
+
 
 
 class RecalboxScreenshotButton(ButtonEntity):
