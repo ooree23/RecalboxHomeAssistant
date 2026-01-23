@@ -11,9 +11,13 @@
     attribute: game
   conditions:
   - condition: template
-    value_template: "{{ trigger.to_state.attributes.game != None and \n   trigger.to_state.attributes.game
-      != 'unknown' and\n   trigger.to_state.attributes.console != 'Kodi' and\n   trigger.to_state.attributes.game
-      != '' }}"
+    value_template: "{{ 
+      trigger.to_state.attributes.game and \n 
+      trigger.to_state.attributes.game != None and \n 
+      trigger.to_state.attributes.game != 'unknown' and \n 
+      trigger.to_state.attributes.console != 'Kodi' and \n   
+      trigger.to_state.attributes.game != '' and \n 
+      trigger.to_state.state == 'on' }}"
   actions:
   - action: notify.notify
     metadata: {}
