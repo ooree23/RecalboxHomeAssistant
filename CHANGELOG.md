@@ -5,7 +5,8 @@
 
 ## v0.0.3 - Work in progress...
 
-- New screenshot script : it first tries a UDP screenshot. If failed, then it tries a screenshot via API.  
+- New screenshot script : it first tries a UDP screenshot.
+  If it fails, then it tries a screenshot via API.  
   Used both for voice/text command, and button pressed.
 - Update dashboard card and button icons
 - Improve notify automation example, to avoid wrong notification when Home Assistant updates itself while Recalbox is still off.
