@@ -1,4 +1,5 @@
 from homeassistant.helpers import intent
+import unicodedata
 import re
 import homeassistant.helpers.config_validation as cv
 from .const import DOMAIN
@@ -12,7 +13,7 @@ async def async_setup_intents(hass):
         RecalboxStatusHandler(),
         RecalboxActionHandler("RecalboxStopGame", 55355, "QUIT", "Retour au menu"),
         RecalboxActionHandler("RecalboxPauseGame", 55355, "PAUSE_TOGGLE", "Pause demandée"),
-        RecalboxActionHandler("RecalboxCreateScreenshot", 55355, "SCREENSHOT", "Deamnde de capture d'écran effectuée")
+        RecalboxScreenshotHandler("RecalboxCreateScreenshot")
     ]
 
     for handler in intents_to_register:
@@ -37,13 +38,31 @@ class RecalboxActionHandler(intent.IntentHandler):
         response.async_set_speech(self._reply)
         return response
 
+class RecalboxScreenshotHandler(intent.IntentHandler):
+    intent_type = "RecalboxCreateScreenshot"
+
+    async def async_handle(self, intent_obj):
+        hass = intent_obj.hass
+        entry_id = list(hass.data[DOMAIN].keys())[0]
+        api = hass.data[DOMAIN][entry_id]["api"]
+
+        if await api.screeshot():
+            text = "La capture d'écran n'a pas pu être effectuée."
+        else:
+            text = "La capture d'écran a été demandée à Recalbox !"
+
+        response = intent_obj.create_response()
+        response.async_set_speech(text)
+        return response
+
 class RecalboxStatusHandler(intent.IntentHandler):
     intent_type = "RecalboxGameStatus"
 
     async def async_handle(self, intent_obj):
         # On va lire l'état de l'entité binary_sensor pour répondre
-        states = intent_obj.hass.states.async_all(DOMAIN)
-        recalbox = states[0] if states else None
+        hass = intent_obj.hass
+        entry_id = list(hass.data[DOMAIN].keys())[0]
+        recalbox = hass.data[DOMAIN][entry_id]
 
         if not recalbox:
             text = "La Recalbox n'a pas été trouvée."
@@ -86,15 +105,31 @@ class RecalboxLaunchHandler(intent.IntentHandler):
 
 
     async def search_and_launch(self, api, console, game_query):
-        # 1. Récupérer la liste des roms via l'API (HTTP GET)
+        # Récupérer la liste des roms via l'API (HTTP GET)
         roms = await api.get_roms(console)
+        if not roms:
+            return f"Aucun jeu trouvé sur la console {console}."
 
-        # 2. Ta logique de filtrage (plus simple qu'en Jinja2 !)
-        pattern = game_query.replace(" ", ".*")
-        target = next((r for r in roms if re.search(pattern, r['name'], re.I)), None)
+        def normalize_str(s):
+            if not s: return ""
+            # Supprime les accents et met en minuscule
+            s = unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode('utf-8')
+            return s.lower().strip()
+
+        query_simplified = normalize_str(game_query)
+        pattern = query_simplified.replace(" ", ".*")
+
+        target = None
+        for r in roms:
+            # On simplifie le nom du fichier/jeu pour la comparaison
+            name_simplified = normalize_str(r.get('name', ''))
+            # Recherche RegEx (l'ordre est respecté grâce au .*)
+            if re.search(pattern, name_simplified):
+                target = r
+                break
 
         if target:
-            # 3. Lancement UDP
             await api.send_udp_command(1337, f"START|{console}|{target['path']}")
-            return f"Je lance {target['name']} sur {console} !"
-        return f"Jeu {game_query} non trouvé sur {console}."
+            return f"Le jeu {target['name']} a bien été trouvé. Lancement sur {console} !"
+        else:
+            return f"Le jeu {game_query} n'a pas été trouvé sur {console}."

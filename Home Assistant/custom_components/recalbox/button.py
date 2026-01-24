@@ -63,11 +63,6 @@ class RecalboxScreenshotButton(ButtonEntity):
         }
 
     async def async_press(self):
-        print("Screen shot UDP, puis API si échec")
-        # 1. Test UDP
-        success = await self._api.send_udp_command(55355, "SCREENSHOT")
-        # 2. Fallback API
-        if not success:
-            await self._api.post_api("/api/media/takescreenshot", port=81)
+        self._api.screenshot()
 
 

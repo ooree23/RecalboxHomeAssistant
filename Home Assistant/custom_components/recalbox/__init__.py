@@ -4,6 +4,7 @@ from .const import DOMAIN
 from .api import RecalboxAPI
 from homeassistant.components.http import StaticPathConfig
 from .intent import async_setup_intents # Pour charger les phrases Assist
+from .www import JSModuleRegistration
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     host = entry.data.get("host")
@@ -30,6 +31,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             False
         )
     ])
+
+    # Register custom cards
+    moodule_register = JSModuleRegistration(hass)
+    await moodule_register.async_register()
 
     return True
 
