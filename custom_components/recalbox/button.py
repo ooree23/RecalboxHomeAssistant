@@ -7,7 +7,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities([
         RecalboxProxyButton(entry, "Shutdown", "mdi:power"),
         RecalboxProxyButton(entry, "Reboot", "mdi:restart"),
-        RecalboxProxyButton(entry, "Screenshot", "mdi:camera")
+        RecalboxProxyButton(entry, "Screenshot", "mdi:camera"),
+        RecalboxProxyButton(entry, "Stop", "mdi:stop")
     ])
 
 class RecalboxProxyButton(ButtonEntity):
@@ -36,6 +37,8 @@ class RecalboxProxyButton(ButtonEntity):
             await entity.request_reboot()
         elif "Screenshot" in self._attr_name:
             await entity.request_screenshot()
+        elif "Stop" in self._attr_name:
+            await entity.request_quit_current_game()
 
 
 

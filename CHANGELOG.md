@@ -4,7 +4,7 @@
 
 ## v0.2.2 - Work in progress
 
-- ...
+- Add a quit current game button, when a game is running
 
 
 

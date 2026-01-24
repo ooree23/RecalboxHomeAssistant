@@ -167,6 +167,16 @@ class RecalboxEntityMQTT(BinarySensorEntity):
             return True
 
 
+    async def request_quit_current_game(self) -> bool :
+        print("Quit current game via UDP")
+        return await self._api.send_udp_command(55355, "QUIT")
+
+
+    async def request_pause_game(self) -> bool :
+        print("(Un)Pause current game via UDP")
+        return await self._api.send_udp_command(55355, "PAUSE_TOGGLE")
+
+
     # Renvoie le texte pour Assist
     async def search_and_launch_game_by_name(self, console, game_query) -> str :
         # Récupérer la liste des roms via l'API (HTTP GET)
