@@ -25,7 +25,7 @@ class RecalboxCard extends HTMLElement {
             .info-row ha-icon { color: var(--state-icon-color); margin-right: 16px; }
             .info-text { flex-grow: 1; }
             .info-value { color: var(--secondary-text-color); font-size: 0.9em; }
-            .one-line { display: flex; flex-direction: row-reverse; justify-content: space-between; vertical-align: middle; margin: 6px 0; }
+            .one-line { display: flex; flex-direction: row-reverse; gap: 20px; justify-content: space-between; vertical-align: middle; margin: 6px 0; }
             .one-line .info-value { color: var(--primary-text-color); font-size: inherit; }
             .status-badge { background: var(--disabled-text-color); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; float: right; }
             .status-on { background: var(--success-color); }
@@ -75,7 +75,7 @@ class RecalboxCard extends HTMLElement {
       <div class="recalbox-card-content">
         <div class="info-row">
           <ha-icon icon="mdi:gamepad-variant-outline"></ha-icon>
-          <div class="info-text"><div>${this.config.title || "Recalbox"}</div><div class="info-value">Système de jeu</div></div>
+          <div class="info-text"><div>${this.config.title || "Recalbox"}</div><div class="info-value">Console rétrogaming tout en un</div></div>
           <span class="status-badge ${isOn ? 'status-on' : ''}">${state.state.toUpperCase()}</span>
         </div>
         ${isOn ? `
