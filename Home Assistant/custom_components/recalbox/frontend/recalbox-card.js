@@ -103,12 +103,14 @@ class RecalboxCard extends HTMLElement {
     // 3. Markdown Footer (Hardware & Links)
     // On essaie de récupérer les infos du device via le registry de HA
     const deviceId = state.context && state.context.device_id;
-    const sw_version = state.attributes.sw_version || "x.x"; // On peut aussi le passer via attributes
+    const recalboxVersion = state.attributes.recalboxVersion || "x.x";
+    const hardware = state.attributes.hardware;
     const host = this.config.host || "recalbox.local";
 
     this.footer.innerHTML = `
       <div>
-        Recalbox (${host}) version ${sw_version}
+        Recalbox (${host}) version ${recalboxVersion}
+        ${ (hardware) ? `, sur ${hardware}` : ''}
         <br>
         <a href="http://${host}:81" target="_blank">Web manager Recalbox</a> |
         <a href="https://www.recalbox.com" target="_blank">Recalbox.com</a> |
