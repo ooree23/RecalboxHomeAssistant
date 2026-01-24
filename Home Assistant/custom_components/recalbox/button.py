@@ -1,6 +1,7 @@
 # button.py
 from homeassistant.components.button import ButtonEntity
 from .const import DOMAIN
+import asyncio
 
 async def async_setup_entry(hass, entry, async_add_entities):
     api = hass.data[DOMAIN][entry.entry_id]["api"]
@@ -13,6 +14,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
             entity_id = f"binary_sensor.recalbox_{entry.data.get('host').replace('.', '_')}"
             state = hass.states.get(entity_id)
             if state:
+                await asyncio.sleep(15)
                 # On force l'état à 'off' manuellement
                 hass.states.async_set(entity_id, "off", state.attributes)
 
