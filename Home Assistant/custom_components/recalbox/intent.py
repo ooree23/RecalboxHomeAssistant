@@ -45,11 +45,17 @@ class RecalboxStatusHandler(intent.IntentHandler):
         states = intent_obj.hass.states.async_all(DOMAIN)
         recalbox = states[0] if states else None
 
-        if not recalbox or recalbox.state == "off":
+        if not recalbox:
+            text = "La Recalbox n'a pas été trouvée."
+        elif recalbox.state == "off":
             text = "La Recalbox est éteinte."
         else:
-            game = recalbox.attributes.get("game", "inconnu")
-            text = f"Tu joues à {game}." if game != "-" else "La Recalbox est allumée mais aucun jeu n'est lancé."
+            game = recalbox.attributes.get("game", "-")
+            if game != "-":
+                console = recalbox.attributes.get("console", "")
+                text = f"Tu joues à {game}, sur {console}."
+            else:
+                text = "La Recalbox est allumée mais aucun jeu n'est lancé."
 
         response = intent_obj.create_response()
         response.async_set_speech(text)
