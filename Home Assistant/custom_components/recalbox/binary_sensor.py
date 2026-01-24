@@ -1,7 +1,7 @@
 from homeassistant.components.mqtt import async_subscribe
 from homeassistant.components.binary_sensor import BinarySensorEntity
-import json
 from .const import DOMAIN
+import json
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Configuration des entités Recalbox à partir de la config entry."""

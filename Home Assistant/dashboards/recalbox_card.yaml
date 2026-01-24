@@ -74,7 +74,7 @@ cards:
         device_attr('binary_sensor.recalbox_recalbox_local', 'hw_version') }}{% endif -%}
       .
 
-      [Web manager Recalbox]({{ device_attr('binary_sensor.recalbox_rpi3',
+      [Web manager Recalbox]({{ device_attr('binary_sensor.recalbox_recalbox_local',
       'configuration_url') }})
 
       [Github de
