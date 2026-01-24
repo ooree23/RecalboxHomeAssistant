@@ -2,7 +2,20 @@
 
 > By Aurélien Tomassini, 2026.
 
-## v0.1.2 - Work in progress
+## v0.2.0 - 24/01/2026
+
+- As `extra_folders` is not working, added a script to copy the `custom_components/recalbox/custom_sentences`
+  to `custom_sentences`. As this script is launched when the integration starts, you could need two restarts
+  to get Assist sentences : a first restart to run the integration, that will copy the sentences ; and a second
+  restart, that will read the sentences on start.
+- Display in dashboard if the secondary restart is needed.
+  The alert is shown when the sentences have been changed.
+- Fill the default host when creating your Recalbox, with `recalbox.local`
+- Move recalbox entities to "instances" in order to be able to store other "global" variables, like "needs_restart"
+  to show info in the dashboard.
+
+ 
+## v0.1.2 - 24/01/2026
 
 - Try to force HACS to copy `custom_sentences` folder, thanks to `extra_folders` key
 - Improve dashboard card actions CSS to make bottom smooth

@@ -62,6 +62,7 @@ class RecalboxCard extends HTMLElement {
     const consoleName = state.attributes.console || "-";
     const genre = state.attributes.genre || "-";
     const imageUrl = state.attributes.imageUrl || "";
+    const needsRestart = state.attributes.needs_restart || false;
 
     // 0. titre
     this.card_title.innerHTML = `
@@ -86,6 +87,21 @@ class RecalboxCard extends HTMLElement {
         ` : ''}
       </div>
     `;
+
+    if (needsRestart) {
+      // On insère un petit bandeau d'alerte en haut de la carte
+      const alertHtml = `
+        <div style="background-color: var(--warning-color); color: white; padding: 8px; border-radius: 4px; margin-bottom: 10px; font-size: 0.8em; display: flex; align-items: center;">
+          <ha-icon icon="mdi:alert" style="margin-right: 8px;"></ha-icon>
+          De nouvelles phrases Assist ont été détectées et installées.
+          Redémarrez une fois de plus pour les activer et avoir accèa aux nouvelles commandes vocales/textuelles.
+        </div>
+      `;
+      // Injecter ce HTML dans ta carte
+      this.content.innerHTML += alertHtml;
+    }
+
+
     const contentDiv = this.querySelector('.recalbox-card-content');
     if (contentDiv) {
       contentDiv.style.cursor = 'pointer'; // Pour montrer que c'est cliquable
