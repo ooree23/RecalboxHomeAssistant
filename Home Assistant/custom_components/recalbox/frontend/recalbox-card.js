@@ -86,6 +86,18 @@ class RecalboxCard extends HTMLElement {
         ` : ''}
       </div>
     `;
+    const contentDiv = this.querySelector('.recalbox-card-content');
+    if (contentDiv) {
+      contentDiv.style.cursor = 'pointer'; // Pour montrer que c'est cliquable
+      contentDiv.onclick = () => {
+        const event = new Event('hass-more-info', {
+          bubbles: true,
+          composed: true,
+        });
+        event.detail = { entityId: this.config.entity };
+        this.dispatchEvent(event);
+      };
+    }
 
     // Image
     this.picture.innerHTML = `
@@ -116,8 +128,7 @@ class RecalboxCard extends HTMLElement {
 
     this.footer.innerHTML = `
       <div>
-        Recalbox (${host}) version ${recalboxVersion}
-        ${ (hardware) ? `, sur ${hardware}` : ''}
+        Recalbox (${host}) version ${recalboxVersion}${ (hardware) ? `, sur ${hardware}` : ''}
         <br>
         <a href="http://${host}:81" target="_blank">Web manager Recalbox</a> |
         <a href="https://www.recalbox.com" target="_blank">Recalbox.com</a> |
