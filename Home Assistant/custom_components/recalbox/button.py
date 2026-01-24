@@ -64,6 +64,6 @@ class RecalboxScreenshotButton(ButtonEntity):
         }
 
     async def async_press(self):
-        self._api.screenshot()
+        await self._api.screenshot()
 
 
