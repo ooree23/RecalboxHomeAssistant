@@ -64,6 +64,22 @@ class RecalboxScreenshotButton(ButtonEntity):
         }
 
     async def async_press(self):
-        await self._api.screenshot()
+        if await self._api.screenshot():
+            # 2. Déclenchement du vrai Toast via l'événement frontend
+            self.hass.bus.async_fire("connection_status_updated", {
+                "message": "La capture d'écran a été faite, et stockée dans le dossier screenshots de Recalbox !",
+            })
+
+            # MÉTHODE DE SECOURS (La plus compatible) :
+            # On utilise le service interne de notification mais on le supprime presque aussitôt
+            # ou on utilise l'appel de service qui génère le toast de succès par défaut.
+            self.hass.async_create_task(
+                self.hass.services.async_call(
+                    "frontend",
+                    "set_theme",
+                    {"name": "default"}, # Ne change rien si déjà par défaut, mais réveille l'UI
+                )
+            )
+
 
 
