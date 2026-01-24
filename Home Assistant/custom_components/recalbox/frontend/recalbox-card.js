@@ -10,36 +10,42 @@ class RecalboxCard extends HTMLElement {
 
     if (!this.content) {
       this.innerHTML = `
+        <div id="title"></div>
         <ha-card>
           <style>
+            .card-header { padding: 24px 16px 16px; margin-block-start: 0px; margin-block-end: 0px; font-weight: var(--ha-font-weight-normal); font-family: var(--ha-card-header-font-family, inherit); font-size: var(--ha-card-header-font-size, var(--ha-font-size-2xl)); line-height: var(--ha-line-height-condensed); }
+
             .recalbox-card-content { padding: 16px; }
-            .info-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--divider-color); }
-            .info-row:last-of-type { border-bottom: none; }
-            .info-row ha-icon { color: var(--icon-primary-color); margin-right: 16px; color: var(--paper-item-icon-color); }
+            .recalbox-card-content hr { margin: 12px 0; border: 0; border-top: 1px solid var(--divider-color); margin: 8px 0; }
+            .info-row { display: flex; align-items: center; padding: 8px 0; }
+            .info-row ha-icon { color: var(--state-icon-color); margin-right: 16px; }
             .info-text { flex-grow: 1; }
             .info-value { color: var(--secondary-text-color); font-size: 0.9em; }
             .status-badge { background: var(--disabled-text-color); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em; float: right; }
             .status-on { background: var(--success-color); }
 
-            .game-preview { text-align: center; padding: 10px 0; background-color: var(--secondary-background-color); margin: 10px -16px; }
+            .game-preview { text-align: center; padding: 10px 0; margin: 10px -16px; }
             .game-preview img { max-width: 90%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
-            .card-actions { display: flex; justify-content: space-evenly; padding: 12px; background-color: var(--secondary-background-color); border-top: 1px solid var(--divider-color); }
-            .action-button { display: flex; flex-direction: row; gap: 6px; border-radius: 20px; padding: 2px 12px; align-items: center; cursor: pointer; font-size: 10px; text-transform: uppercase; color: var(--primary-text-color); }
-            .action-button ha-icon { color: var(--icon-primary-color); margin-bottom: 4px; --mdc-icon-size: 18px; }
+            .card-actions { display: flex; gap: 8px; justify-content: center; padding: 12px; background-color: var(--secondary-background-color); border-top: 1px solid var(--divider-color); }
+            .action-button { display: flex; flex-direction: row; gap: 6px; border-radius: 20px; padding: 2px 12px; align-items: center; cursor: pointer; font-size: 10px; text-transform: uppercase; color: var(--primary-text-color); background-color: var(--chip-background-color); }
+            .action-button ha-icon { color: var(--_leading-icon-color); margin-bottom: 4px; --mdc-icon-size: 18px; }
 
-            .card-markdown-footer { padding: 8px 16px; border-top: 1px solid var(--divider-color); font-size: 0.8em; color: var(--secondary-text-color); line-height: 1.4; }
+            .card-markdown-footer { padding: 24px 16px 16px; font-size: 0.8em; color: var(--secondary-text-color); line-height: 1.4; }
             .card-markdown-footer hr { border: 0; border-top: 1px solid var(--divider-color); margin: 8px 0; }
             .card-markdown-footer a { color: var(--primary-color); text-decoration: none; font-weight: bold; }
 
-            .footer { margin: 12px 0px; }
+            .game-picture { }
           </style>
           <div id="container"></div>
           <div id="actions-area" class="card-actions"></div>
-          <div id="markdown-footer" class="card-markdown-footer"></div>
         </ha-card>
+        <div id="picture" class="game-picture"></div>
+        <div id="markdown-footer" class="card-markdown-footer"></div>
       `;
+      this.card_title = this.querySelector('#title');
       this.content = this.querySelector('#container');
+      this.picture = this.querySelector('#picture');
       this.actions = this.querySelector('#actions-area');
       this.footer = this.querySelector('#markdown-footer');
     }
@@ -50,6 +56,13 @@ class RecalboxCard extends HTMLElement {
     const genre = state.attributes.genre || "-";
     const imageUrl = state.attributes.imageUrl || "";
 
+    // 0. titre
+    this.card_title.innerHTML = `
+      <h1 class="card-header">
+        Recalbox
+      </h1>
+    `
+
     // 1. Infos principales
     this.content.innerHTML = `
       <div class="recalbox-card-content">
@@ -59,13 +72,18 @@ class RecalboxCard extends HTMLElement {
           <span class="status-badge ${isOn ? 'status-on' : ''}">${state.state.toUpperCase()}</span>
         </div>
         ${isOn ? `
+          <hr/>
           <div class="info-row"><ha-icon icon="mdi:sony-playstation"></ha-icon><div class="info-text"><div>${consoleName}</div><div class="info-value">Console</div></div></div>
           <div class="info-row"><ha-icon icon="mdi:gamepad-variant-outline"></ha-icon><div class="info-text"><div>${game}</div><div class="info-value">Jeu</div></div></div>
           <div class="info-row"><ha-icon icon="mdi:folder-outline"></ha-icon><div class="info-text"><div>${genre}</div><div class="info-value">Genre</div></div></div>
-          ${imageUrl && imageUrl.length > 5 ? `<div class="game-preview"><img src="${imageUrl}"></div>` : ''}
         ` : ''}
       </div>
     `;
+
+    // Image
+    this.picture.innerHTML = `
+        ${isOn && imageUrl && imageUrl.length > 5 ? `<div class="game-preview"><img src="${imageUrl}"></div>` : ''}
+    `
 
     // 2. Boutons d'actions
     if (isOn) {
@@ -89,10 +107,10 @@ class RecalboxCard extends HTMLElement {
     const host = this.config.host || "recalbox.local";
 
     this.footer.innerHTML = `
-      <div class="footer">
+      <div>
         Recalbox (${host}) version ${sw_version}
         <br>
-        <a href="http://${host}:81" target="_blank">Recalbox WebManager</a> |
+        <a href="http://${host}:81" target="_blank">Web manager Recalbox</a> |
         <a href="https://www.recalbox.com" target="_blank">Recalbox.com</a> |
         <a href="https://github.com/tototo23/RecalboxHomeAssistant" target="_blank">GitHub intégration</a>
       </div>
