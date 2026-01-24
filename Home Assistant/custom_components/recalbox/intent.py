@@ -77,7 +77,7 @@ class RecalboxStatusHandler(intent.IntentHandler):
                 console = recalbox.attributes.get("console", "")
                 text = f"Tu joues à {game}, sur {console}."
             else:
-                text = "La Recalbox est allumée mais aucun jeu n'est lancé."
+                text = "La Recalbox est allumée, mais aucun jeu n'est lancé."
 
         response = intent_obj.create_response()
         response.async_set_speech(text)
@@ -99,7 +99,7 @@ class RecalboxLaunchHandler(intent.IntentHandler):
         entry_id = list(hass.data[DOMAIN].keys())[0]
         api = hass.data[DOMAIN][entry_id]["api"]
 
-        # Appeler ta fonction de recherche
+        # Appeler la fonction de recherche
         result_text = await self.search_and_launch(api, console, game)
 
         response = intent_obj.create_response()

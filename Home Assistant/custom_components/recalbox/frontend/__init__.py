@@ -1,6 +1,6 @@
 """View Assist Javascript module registration."""
 
-# Source : https://github.com/asantaga/wiserHomeAssistantPlatform/blob/master/custom_components/wiser/frontend/__init__.py
+# Source : https://gist.github.com/KipK/3cf706ac89573432803aaa2f5ca40492
 
 import logging
 import os

@@ -35,24 +35,24 @@ class RecalboxCard extends HTMLElement {
         </div>
     `;
 
-    if (isOn) {
-      html += `
-        <div class="info-row"><ha-icon icon="mdi:sony-playstation"></ha-icon><span>Console: ${console}</span></div>
-        <div class="info-row"><ha-icon icon="mdi:gamepad-variant-outline"></ha-icon><span>Jeu: ${game}</span></div>
-        <div class="info-row"><ha-icon icon="mdi:folder-outline"></ha-icon><span>Genre: ${genre}</span></div>
-      `;
-    }
+        if (isOn) {
+          html += `
+            <div class="info-row"><ha-icon icon="mdi:sony-playstation"></ha-icon><span>Console: ${console}</span></div>
+            <div class="info-row"><ha-icon icon="mdi:gamepad-variant-outline"></ha-icon><span>Jeu: ${game}</span></div>
+            <div class="info-row"><ha-icon icon="mdi:folder-outline"></ha-icon><span>Genre: ${genre}</span></div>
+          `;
+        }
+
+        // Ajout des boutons si souhaité
+        html += `
+          <div class="actions">
+            <ha-icon-button icon="mdi:camera" title="Screenshot" id="btn-snap"></ha-icon-button>
+            <ha-icon-button icon="mdi:restart" title="Reboot" id="btn-reboot"></ha-icon-button>
+            <ha-icon-button icon="mdi:power" title="Shutdown" id="btn-stop"></ha-icon-button>
+          </div>
+        `;
 
     html += `</div>`;
-
-    // Ajout des boutons si souhaité
-    html += `
-      <div class="actions">
-        <ha-icon-button icon="mdi:camera" title="Screenshot" id="btn-snap"></ha-icon-button>
-        <ha-icon-button icon="mdi:restart" title="Reboot" id="btn-reboot"></ha-icon-button>
-        <ha-icon-button icon="mdi:power" title="Shutdown" id="btn-stop"></ha-icon-button>
-      </div>
-    `;
 
     if (isOn && img.length && img.length > 5) {
       html += `
