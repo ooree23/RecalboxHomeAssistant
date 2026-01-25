@@ -5,7 +5,7 @@ const TRANSLATIONS = {
     "system": "Console",
     "game": "Jeu en cours",
     "genre": "Genre",
-    "rebootRequired": "De nouvelles phrases Assist ont été détectées et installées. Redémarrez une fois de plus pour les activer et avoir accès aux nouvelles commandes vocales/textuelles.",
+    "rebootRequired": "De nouvelles phrases Assist ont été détectées et installées. Redémarrez Home Assistant une nouvelle fois pour les activer et avoir accès aux nouvelles commandes vocales/textuelles.",
     "buttons": {
       "shutdown": "Éteindre",
       "reboot": "Redémarrer",
@@ -67,7 +67,7 @@ class RecalboxCard extends HTMLElement {
             .recalbox-card-content { padding: 16px; }
             .recalbox-card-content hr { margin: 12px 0; border: 0; border-top: 1px solid var(--divider-color); margin: 8px 0; }
             .info-row { display: flex; align-items: center; padding: 8px 0; }
-            .info-row ha-icon { color: var(--state-icon-color); margin-right: 16px; }
+            .info-row ha-icon { color: var(--state-icon-color); margin-right: 20px; margin-left: 4px; }
             .info-text { flex-grow: 1; }
             .info-value { color: var(--secondary-text-color); font-size: 0.9em; }
             .one-line { display: flex; flex-direction: row-reverse; gap: 20px; justify-content: space-between; vertical-align: middle; margin: 6px 0; }
