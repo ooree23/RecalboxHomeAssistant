@@ -37,7 +37,7 @@ class RecalboxActionHandler(intent.IntentHandler):
         translator = hass.data[DOMAIN]["translator"]
 
         response = intent_obj.create_response()
-        response.async_set_speech(translator.translate(self._responseKey))
+        response.async_set_speech(translator.translate(self._responseKey, lang=intent_obj.language))
         return response
 
 class RecalboxScreenshotHandler(intent.IntentHandler):
@@ -51,9 +51,9 @@ class RecalboxScreenshotHandler(intent.IntentHandler):
         translator = hass.data[DOMAIN]["translator"]
 
         if await recalbox.request_screenshot():
-            text = translator.translate("intent_response.screenshot_success")
+            text = translator.translate("intent_response.screenshot_success", lang=intent_obj.language)
         else:
-            text = translator.translate("intent_response.screenshot_fail")
+            text = translator.translate("intent_response.screenshot_fail", lang=intent_obj.language)
 
         response = intent_obj.create_response()
         response.async_set_speech(text)
@@ -72,19 +72,20 @@ class RecalboxStatusHandler(intent.IntentHandler):
         translator = hass.data[DOMAIN]["translator"]
 
         if not recalbox:
-            text = translator.translate("intent_response.recalbox_not_found")
+            text = translator.translate("intent_response.recalbox_not_found", lang=intent_obj.language)
         elif recalbox.state == "off":
-            text = translator.translate("intent_response.recalbox_offline")
+            text = translator.translate("intent_response.recalbox_offline", lang=intent_obj.language)
         else:
             game = recalbox.attributes.get("game", "-")
             if game is not None and game != "None" and game != "-" :
                 console = recalbox.attributes.get("console", "")
                 text = translator.translate(
                     "intent_response.game_status_playing",
-                    {"game": game, "console": console}
+                    {"game": game, "console": console},
+                    lang=intent_obj.language
                 )
             else:
-                text = translator.translate("intent_response.game_status_none")
+                text = translator.translate("intent_response.game_status_none", lang=intent_obj.language)
 
         response = intent_obj.create_response()
         response.async_set_speech(text)
@@ -107,7 +108,7 @@ class RecalboxLaunchHandler(intent.IntentHandler):
         console = slots.get("console", {}).get("value")
 
         # Appeler la fonction de recherche
-        result_text = await recalbox.search_and_launch_game_by_name(console, game)
+        result_text = await recalbox.search_and_launch_game_by_name(console, game, lang=intent_obj.language)
 
         response = intent_obj.create_response()
         response.async_set_speech(result_text)

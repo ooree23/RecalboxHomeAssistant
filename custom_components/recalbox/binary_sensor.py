@@ -186,7 +186,7 @@ class RecalboxEntityMQTT(CoordinatorEntity, BinarySensorEntity):
 
 
     # Renvoie le texte pour Assist
-    async def search_and_launch_game_by_name(self, console, game_query) -> str :
+    async def search_and_launch_game_by_name(self, console, game_query, lang=None) -> str :
         _LOGGER.debug(f"Try to launch game {game_query} on system {console}")
         translator = self.hass.data[DOMAIN]["translator"]
         # Récupérer la liste des roms via l'API (HTTP GET)
@@ -195,10 +195,11 @@ class RecalboxEntityMQTT(CoordinatorEntity, BinarySensorEntity):
             if not roms:
                 return translator.translate(
                     "intent_response.no_game_on_system",
-                    {"console": console}
+                    {"console": console},
+                    lang = lang
                 )
         except:
-            return translator.translate("intent_response.list_roms_failed")
+            return translator.translate("intent_response.list_roms_failed", lang=lang)
 
 
         def normalize_str(s):
@@ -226,19 +227,22 @@ class RecalboxEntityMQTT(CoordinatorEntity, BinarySensorEntity):
                 _LOGGER.debug(f"Game launched !")
                 return translator.translate(
                     "intent_response.game_launched_success",
-                    {"console": console, "game": target['name']}
+                    {"console": console, "game": target['name']},
+                    lang=lang
                 )
             except Exception as err:
                 _LOGGER.error(f"Failed to launch game {target['name']} on {console} : {err}")
                 return translator.translate(
                     "intent_response.game_launched_error",
-                    {"console": console, "game": target['name']}
+                    {"console": console, "game": target['name']},
+                    lang=lang
                 )
         else:
             _LOGGER.info(f"No game matching {game_query} on {console} !")
             return translator.translate(
                 "intent_response.game_not_found_on_console",
-                {"console": console, "game":game_query}
+                {"console": console, "game":game_query},
+                lang=lang
             )
 
 

@@ -8,7 +8,8 @@
 - Reduce ping rate from 60s to 30s, to detect Recalbox disappearing or reappearing.
   To be displayed as ON, the recalbox must received pings AND send ON status via MQTT messages.
   If one of those conditions is false, the recalbox will be shown as OFF.
-
+- Add conversation/assist translations in FR/EN.
+  It is based on the assist language.
 
 
 ## v1.0.2 - 25/01/2026

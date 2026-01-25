@@ -28,9 +28,9 @@ class RecalboxTranslator:
                 self._cache[lang] = {}
         return self._cache[lang]
 
-    def translate(self, path, variables=None):
-        lang = self.hass.config.language
-        data = self._load_language(lang)
+    def translate(self, path, variables=None, lang=None):
+        target_lang = lang or self.hass.config.language or "en"
+        data = self._load_language(target_lang)
 
         # Navigation dans le JSON par points (ex: "intent_response.status.off")
         keys = path.split(".")
