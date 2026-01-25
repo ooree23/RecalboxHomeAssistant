@@ -3,10 +3,12 @@
 > By Aurélien Tomassini, 2026.
 
 
-## v1.0.4 - ...
+## v1.1.0 - 25/01/2026
 
 
-- ...
+- Improve documentation
+- Improve dashboard translations
+- Add description translation of the Custom Card "Recalbox Card" selector, based on the browser language
 
 
 ## v1.0.3 - 25/01/2026
