@@ -3,6 +3,11 @@
 > By Aurélien Tomassini, 2026.
 
 
+## v1.0.2 - Working progress...
+
+- ...
+
+
 ## v1.0.1 - 25/01/2026
 
 - Add a coordinator, which pings the Recalbox every 1min, to check if it is still ON
