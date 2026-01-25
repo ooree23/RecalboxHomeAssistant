@@ -3,6 +3,12 @@
 > By Aurélien Tomassini, 2026.
 
 
+## v1.0.4 - ...
+
+
+- ...
+
+
 ## v1.0.3 - 25/01/2026
 
 - Reduce ping rate from 60s to 30s, to detect Recalbox disappearing or reappearing.
