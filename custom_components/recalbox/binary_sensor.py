@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 
-async def prepare_ping_coordinator(api) -> DataUpdateCoordinator:
+async def prepare_ping_coordinator(hass, api) -> DataUpdateCoordinator:
     # 1. On définit le coordinateur pour le "Ping"
     async def async_update_data():
         """Vérifie si la Recalbox répond toujours sur son API."""
@@ -41,7 +41,7 @@ async def prepare_ping_coordinator(api) -> DataUpdateCoordinator:
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Configuration des entités Recalbox à partir de la config entry."""
     api = hass.data[DOMAIN]["instances"][config_entry.entry_id]["api"]
-    coordinator = await prepare_ping_coordinator(api)
+    coordinator = await prepare_ping_coordinator(hass, api)
     # On crée l'entité en lui passant l'objet config_entry (qui contient l'IP)
     new_entity = RecalboxEntityMQTT(hass, config_entry, api, coordinator)
     hass.data[DOMAIN]["instances"][config_entry.entry_id]["sensor_entity"] = new_entity # pour la retrouver ailleurs plus facilement
@@ -168,6 +168,7 @@ class RecalboxEntityMQTT(BinarySensorEntity):
 
     # Dans binary_sensor.py, classe RecalboxEntityMQTT
     async def force_status_off(self):
+        _LOGGER.debug("Forcing Recalbox status OFF")
         """Force l'état à OFF sans attendre MQTT."""
         self._attr_is_on = False
         self.async_write_ha_state()
@@ -180,6 +181,7 @@ class RecalboxEntityMQTT(BinarySensorEntity):
 
 
     async def request_shutdown(self) -> bool:
+        _LOGGER.debug("Shut down Recalbox via API")
         if await self._api.post_api("/api/system/shutdown", port=80) :
             await asyncio.sleep(5)
             await self.force_status_off()
@@ -189,6 +191,7 @@ class RecalboxEntityMQTT(BinarySensorEntity):
 
 
     async def request_reboot(self) -> bool :
+        _LOGGER.debug("Reboot Recalbox via API")
         if await self._api.post_api("/api/system/reboot", port=80) :
             await asyncio.sleep(5)
             await self.force_status_off()
@@ -198,13 +201,15 @@ class RecalboxEntityMQTT(BinarySensorEntity):
 
 
     async def request_screenshot(self) -> bool :
-        print("Screen shot UDP, puis API si échec")
+        _LOGGER.debug("Screenshot UDP, puis API si échec")
         # 1. Test UDP
         success = await self._api.send_udp_command(55355, "SCREENSHOT")
         # 2. Fallback API
         if not success:
+            _LOGGER.warning("Screenshot UDP command not sent on port 55355. Please check your Recalbox is has this port running. Will now try a screenshot via API...")
             return await self._api.post_api("/api/media/takescreenshot", port=81)
         else:
+            _LOGGER.debug("Screenshot UDP command sent successfully to Recalbox")
             return True
 
 
