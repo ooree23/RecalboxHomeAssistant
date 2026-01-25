@@ -47,11 +47,12 @@ class RecalboxScreenshotHandler(intent.IntentHandler):
         instances = hass.data[DOMAIN].get("instances", {})
         entry_id = list(instances.keys())[0]
         recalbox = instances[entry_id].get("sensor_entity")
+        translator = hass.data[DOMAIN]["translator"]
 
         if await recalbox.request_screenshot():
-            text = "La capture d'écran a été faite, et stockée dans le dossier screenshots de Recalbox !"
+            text = translator.translate("intent_response.screenshot_success")
         else:
-            text = "La capture d'écran n'a pas pu être effectuée."
+            text = translator.translate("intent_response.screenshot_fail")
 
         response = intent_obj.create_response()
         response.async_set_speech(text)
