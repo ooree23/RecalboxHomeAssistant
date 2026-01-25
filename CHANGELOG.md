@@ -9,6 +9,7 @@
 - Improve logs
 - Internationalisation FR/EN of the Dashboard card
 - Set "Recalbox" notification channel on automation example
+- Remove screenshot button when Kodi is running
 
 
 
