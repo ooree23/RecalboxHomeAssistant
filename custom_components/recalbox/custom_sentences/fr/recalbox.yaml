@@ -29,7 +29,8 @@ intents:
     data:
       - sentences:
           - "(mets en pause | reprends | arrête la pause) le jeu (actuel | en cours) [sur [la] recalbox]"
-          
+          - "mets le jeu en pause [sur [la] recalbox]"
+
 lists:
   game:
     wildcard: true
