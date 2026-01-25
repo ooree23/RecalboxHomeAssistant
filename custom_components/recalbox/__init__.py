@@ -152,7 +152,9 @@ async def async_install_sentences(hass: HomeAssistant) -> bool :
                                 _LOGGER.info("Mise à jour phrase Assist : %s", dest_file)
                                 changes_made = True
                             except Exception as e:
-                                _LOGGER.error("Erreur copie sentence %s: %s", file_name, e)
+                                _LOGGER.error("Failed to copy file to %s: %s", dest_file, e)
+                        else:
+                            _LOGGER.debug("Hashes are equals, no need to copy again this file.")
         return changes_made
     except Exception as e:
         _LOGGER.error("Erreur lors de l'installation des phrases Assist : %s", e)
