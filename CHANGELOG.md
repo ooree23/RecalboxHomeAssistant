@@ -3,6 +3,11 @@
 > By Aurélien Tomassini, 2026.
 
 
+## v1.0.2 - 25/01/2026
+
+- Fix en/fr empty json files
+
+
 ## v1.0.1 - 25/01/2026
 
 - Add a coordinator, which pings the Recalbox every 1min, to check if it is still ON
