@@ -99,11 +99,13 @@ It uses the same services just listed.
 
 2. **Home Assistant**
  
-   - Install MQTT Broker :
-   
+   - Install MQTT Broker  
+     
      - Create a new Home Assistant User, named "recalbox" (or something else), allowed to connect only on the local network. This user will be used for MQTT Authentication. Replace the user/password `home_assistant_notifier.sh` line 13 and 14 (`MQTT_USER` & `MQTT_PASS`)
    
-     - Install MQTT Mosquitto broker in Home assistant (in addons). Enable the Run on start, and watchdog.
+     - Install MQTT Mosquitto broker in Home assistant (in addons).  
+       [![Open your Home Assistant instance and open install MQTT.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=mqtt)  
+       Enable the Run on start, and watchdog.
    
      - In services integration, add MQTT service which should be now available.
        Click on reconfigure, and use the credentials defined for authentication.
@@ -111,13 +113,15 @@ It uses the same services just listed.
      
    - Install Recalbox Integration
    
-     - Install HACS, and then click below
+     - Install HACS
      
-     - [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tototo23&repository=RecalboxHomeAssistant&category=integration)  
+     - Install this repository via this button :  
+       [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tototo23&repository=RecalboxHomeAssistant&category=integration)  
        Or manually, add `https://github.com/tototo23/RecalboxHomeAssistant` as repository, as Integration.
        Press download, and then accept to restart.
        It will automatically add Recalbox to your Home Assistant, with device creation
        (new "Recalbox" Integration will be available after restart), the custom_sentences recognition for assist, and a custom dashboard card.
+       A second reboot could be necessary, depending on what's shown on dashboard custom card.
 
 
 ## Usage 
