@@ -8,6 +8,7 @@
 
 - Improve custom_sentences update check algorithm, 
   in order to not ask to reboot if the sentences have no real change
+- Improve french custom sentences for intents (more natural)
 
 
 ## v1.1.0 - 25/01/2026
