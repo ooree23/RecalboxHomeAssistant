@@ -6,7 +6,11 @@
 ## v1.2.2 - ...
 
 
-- ...
+- Implementing a new coordinator with Pings history.
+  If the Recalbox didnt answer to all the pings during the last 2 minutes,
+  then we consider it's offline. If there is at least one ping OK during the
+  the last 2 minutes, then we use the status based on MQTT messages.
+- Improve MQTT logs
 
 
 ## v1.2.1 - 26/01/2026
