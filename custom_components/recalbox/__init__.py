@@ -9,7 +9,7 @@ from .const import DOMAIN
 from .api import RecalboxAPI
 from .intent import async_setup_intents
 from .frontend import JSModuleRegistration
-from .translations import RecalboxTranslator
+from .translations_service import RecalboxTranslator
 from .custom_sentences_installer import install_sentences
 from .services_installer import install_services
 import os
@@ -23,13 +23,12 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {"instances": {}, "global": {}})
     host = entry.data.get("host")
+    hass.data.setdefault(DOMAIN, {})
 
-    # Traducteur : accessible partout
-    translator = RecalboxTranslator(hass, DOMAIN)
-    hass.data[DOMAIN]["translator"] = translator
+    # Ajout du service de traductions : accessible partout (genre de singleton)
+    hass.data[DOMAIN]["translator"] = RecalboxTranslator(hass, DOMAIN)
 
     # On stocke l'API pour que button.py puisse la récupérer
-    hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN]["instances"][entry.entry_id] = {
         "api": RecalboxAPI(host)
     }
@@ -37,7 +36,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # On enregistre les phrases Assist
     await async_setup_intents(hass)
 
-    # On ajoute notre switch à la liste des plateformes
+    # On ajoute le switch à la liste des plateformes
     await hass.config_entries.async_forward_entry_setups(entry, ["switch"])
 
     # rengistrement des services Recalbox, utilisés par la partie JS notamment

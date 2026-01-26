@@ -4,6 +4,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.helpers import device_registry as dr
 from homeassistant.exceptions import HomeAssistantError
 from .const import DOMAIN
+from .translations_service import RecalboxTranslator
 import unicodedata
 import re
 import homeassistant.helpers.config_validation as cv
@@ -127,7 +128,7 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
 
 
     async def async_turn_on(self, **kwargs):
-        translator = self.hass.data[DOMAIN]["translator"]
+        translator:RecalboxTranslator = self.hass.data[DOMAIN]["translator"]
         power_off_not_implemented_message = translator.translate("errors.power_off_not_implemented_message")
         raise HomeAssistantError(power_off_not_implemented_message)
 
@@ -197,7 +198,7 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
     # Renvoie le texte pour Assist
     async def search_and_launch_game_by_name(self, console, game_query, lang=None) -> str :
         _LOGGER.debug(f"Try to launch game {game_query} on system {console}")
-        translator = self.hass.data[DOMAIN]["translator"]
+        translator:RecalboxTranslator = self.hass.data[DOMAIN]["translator"]
         # Récupérer la liste des roms via l'API (HTTP GET)
         try:
             roms = await self._api.get_roms(console)

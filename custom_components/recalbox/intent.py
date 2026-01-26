@@ -1,8 +1,10 @@
 from homeassistant.helpers import intent
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, State
 import unicodedata
 import re
 from .const import DOMAIN
+from .translations_service import RecalboxTranslator
+from .switch import RecalboxEntityMQTT
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -37,17 +39,17 @@ async def async_setup_intents(hass):
 # Va chercher la Recalbox par défaut.
 # Pour le moment on ne supporte qu'une seule recalbox via Assist -> on prend la première
 # Plus tard, on ira chercher celle désignée en vocal/text
-def find_recalbox_entity(hass: HomeAssistant, entity_id=None):
+def find_recalbox_entity(hass: HomeAssistant, entity_id=None) -> RecalboxEntityMQTT:
     instances = hass.data[DOMAIN].get("instances", {})
     entry_id = list(instances.keys())[0]
-    recalbox = instances[entry_id].get("sensor_entity")
+    recalbox:RecalboxEntityMQTT = instances[entry_id].get("sensor_entity")
     return recalbox
 
-def find_recalbox_states(hass: HomeAssistant, entity_id=None):
-    recalboxEntity: find_recalbox_entity(hass, entity_id=entity_id)
+def find_recalbox_states(hass: HomeAssistant, entity_id=None) -> State:
+    recalboxEntity:RecalboxEntityMQTT = find_recalbox_entity(hass, entity_id=entity_id)
     return hass.states.get(recalboxEntity.entity_id)
 
-def get_translator(hass: HomeAssistant):
+def get_translator(hass: HomeAssistant) -> RecalboxTranslator:
     return hass.data[DOMAIN]["translator"]
 
 
@@ -80,8 +82,8 @@ class RecalboxScreenshotHandler(intent.IntentHandler):
 
     async def async_handle(self, intent_obj):
         hass = intent_obj.hass
-        recalbox = find_recalbox_entity(hass)
-        translator = get_translator(hass)
+        recalbox:RecalboxEntityMQTT = find_recalbox_entity(hass)
+        translator:RecalboxTranslator = get_translator(hass)
 
         if await recalbox.request_screenshot():
             text = translator.translate("intent_response.screenshot_success", lang=intent_obj.language)
@@ -99,8 +101,8 @@ class RecalboxQuitGameHandler(intent.IntentHandler):
 
     async def async_handle(self, intent_obj):
         hass = intent_obj.hass
-        recalbox = find_recalbox_entity(hass)
-        translator = get_translator(hass)
+        recalbox:RecalboxEntityMQTT = find_recalbox_entity(hass)
+        translator:RecalboxTranslator = get_translator(hass)
 
         if await recalbox.request_quit_current_game():
             text = translator.translate("intent_response.quit_game_requested", lang=intent_obj.language)
@@ -118,8 +120,8 @@ class RecalboxPauseGameHandler(intent.IntentHandler):
 
     async def async_handle(self, intent_obj):
         hass = intent_obj.hass
-        recalbox = find_recalbox_entity(hass)
-        translator = get_translator(hass)
+        recalbox:RecalboxEntityMQTT = find_recalbox_entity(hass)
+        translator:RecalboxTranslator = get_translator(hass)
 
         if await recalbox.request_pause_game():
             text = translator.translate("intent_response.pause_game_requested", lang=intent_obj.language)
@@ -138,17 +140,17 @@ class RecalboxStatusHandler(intent.IntentHandler):
     async def async_handle(self, intent_obj):
         # On va lire l'état de l'entité binary_sensor pour répondre
         hass = intent_obj.hass
-        recalbox = find_recalbox_states(hass)
-        translator = get_translator(hass)
+        recalboxState:State = find_recalbox_states(hass)
+        translator:RecalboxTranslator = get_translator(hass)
 
-        if not recalbox:
+        if not recalboxState:
             text = translator.translate("intent_response.recalbox_not_found", lang=intent_obj.language)
-        elif recalbox.state == "off":
+        elif recalboxState.state == "off":
             text = translator.translate("intent_response.recalbox_offline", lang=intent_obj.language)
         else:
-            game = recalbox.attributes.get("game", "-")
+            game = recalboxState.attributes.get("game", "-")
             if game is not None and game != "None" and game != "-" :
-                console = recalbox.attributes.get("console", "")
+                console = recalboxState.attributes.get("console", "")
                 text = translator.translate(
                     "intent_response.game_status_playing",
                     {"game": game, "console": console},
