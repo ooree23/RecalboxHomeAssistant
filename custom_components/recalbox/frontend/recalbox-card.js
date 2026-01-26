@@ -59,9 +59,9 @@ class RecalboxCard extends HTMLElement {
           <style>
             .card-header { padding: 24px 16px 16px; margin-block-start: 0px; margin-block-end: 0px; font-weight: var(--ha-font-weight-normal); font-family: var(--ha-card-header-font-family, inherit); font-size: var(--ha-card-header-font-size, var(--ha-font-size-2xl)); line-height: var(--ha-line-height-condensed); }
 
-            .recalbox-card-content { padding: 16px 20px; }
+            .recalbox-card-content { padding: var(--ha-space-4); }
             .recalbox-card-content hr { margin: 12px 0; border: 0; border-top: 1px solid var(--divider-color); margin: 8px 0; }
-            .info-row { display: flex; align-items: center; padding: 8px 0; }
+            .info-row { display: flex; align-items: center; padding: 4px 0; min-height: 40px; }
             .info-row ha-icon { color: var(--state-icon-color); margin-right: 24px; margin-left: 4px; }
             .info-text { flex-grow: 1; }
             .info-value { color: var(--secondary-text-color); font-size: 0.9em; }
@@ -76,7 +76,7 @@ class RecalboxCard extends HTMLElement {
             .action-button ha-icon { color: var(--_leading-icon-color); margin-bottom: 4px; --mdc-icon-size: 18px; }
 
             .card-markdown-footer { padding: 24px 16px 16px; font-size: 0.8em; color: var(--secondary-text-color); line-height: 1.4; }
-            .card-markdown-footer hr { border: 0; border-top: 1px solid var(--divider-color); margin: 8px 0; }
+            .card-markdown-footer hr { border: 0; border-top: 1px solid var(--divider-color); margin: 16px 0; }
             .card-markdown-footer a { color: var(--primary-color); text-decoration: none; font-weight: bold; }
 
             .game-picture { }
