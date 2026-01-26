@@ -7,7 +7,7 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-def setup_intents(hass):
+def async_setup_intents(hass):
     """Enregistre les handlers d'intentions seulement s'ils n'existent pas."""
 
     if "intents_registered" in hass.data[DOMAIN]:
@@ -27,9 +27,29 @@ def setup_intents(hass):
         # On vérifie si l'intent_type est déjà enregistré
         if handler.intent_type not in intent.async_get(hass):
             intent.async_register(hass, handler)
-            _LOGGER.info(f"Registered {handler.intent_type} handler")
+            _LOGGER.info(f"Registered {handler.intent_type} intent handler")
 
     hass.data[DOMAIN]["intents_registered"] = True
+
+
+# --- TOOLS ----
+
+# Va chercher la Recalbox par défaut.
+# Pour le moment on ne supporte qu'une seule recalbox via Assist -> on prend la première
+# Plus tard, on ira chercher celle désignée en vocal/text
+def find_recalbox_entity(hass: HomeAssistant):
+    instances = hass.data[DOMAIN].get("instances", {})
+    entry_id = list(instances.keys())[0]
+    recalbox = instances[entry_id].get("sensor_entity")
+    return recalbox
+
+def get_translator(hass: HomeAssistant):
+    return hass.data[DOMAIN]["translator"]
+
+
+
+# ---- Intent Handlers -----
+
 
 
 #class RecalboxOtherUDPActionHandler(intent.IntentHandler):
@@ -49,19 +69,6 @@ def setup_intents(hass):
 #        response = intent_obj.create_response()
 #        response.async_set_speech(translator.translate(self._responseKey, lang=intent_obj.language))
 #        return response
-
-
-# Va chercher la Recalbox par défaut.
-# Pour le moment on ne supporte qu'une seule recalbox via Assist -> on prend la première
-# Plus tard, on ira chercher celle désignée en vocal/text
-def find_recalbox_entity(hass: HomeAssistant):
-    instances = hass.data[DOMAIN].get("instances", {})
-    entry_id = list(instances.keys())[0]
-    recalbox = instances[entry_id].get("sensor_entity")
-    return recalbox
-
-def get_translator(hass: HomeAssistant):
-    return hass.data[DOMAIN]["translator"]
 
 
 class RecalboxScreenshotHandler(intent.IntentHandler):

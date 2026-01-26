@@ -7,7 +7,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.http import StaticPathConfig
 from .const import DOMAIN
 from .api import RecalboxAPI
-from .intent import setup_intents
+from .intent import async_setup_intents
 from .frontend import JSModuleRegistration
 from .translations import RecalboxTranslator
 from .custom_sentences_installer import install_sentences
@@ -35,7 +35,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     }
 
     # On enregistre les phrases Assist
-    setup_intents(hass)
+    await async_setup_intents(hass)
 
     # On ajoute notre switch à la liste des plateformes
     await hass.config_entries.async_forward_entry_setups(entry, ["switch"])
@@ -44,6 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # mais dispo aussi dans HA au global
     install_services(hass)
 
+    _LOGGER.debug(f"Entry {entry.entry_id} setup complete")
     return True
 
 
@@ -52,6 +53,7 @@ async def async_register_frontend(hass: HomeAssistant) -> None:
     """Register frontend modules after HA startup."""
     module_register = JSModuleRegistration(hass)
     await module_register.async_register()
+    _LOGGER.debug(f"Front end registration complete")
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
@@ -87,7 +89,9 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
         # Otherwise, wait for STARTED event
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, _setup_frontend)
 
+    _LOGGER.debug(f"{DOMAIN} setup complete")
     return True
+
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Suppression de l'intégration."""

@@ -12,7 +12,8 @@ from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
-def get_file_hash(filename):
+# Calcule le MD5 en ignorant les différences de retours à la ligne
+def _get_file_hash(filename):
     """Calcule le hash MD5 d'un fichier."""
     hash_md5 = hashlib.md5()
     try:
@@ -58,8 +59,8 @@ def install_sentences(hass: HomeAssistant) -> bool :
                         _LOGGER.debug("Check if should copy %s to %s ...", source_file, dest_file)
 
                         # LOGIQUE PAR HASH
-                        source_hash = get_file_hash(source_file)
-                        dest_hash = get_file_hash(dest_file)
+                        source_hash = _get_file_hash(source_file)
+                        dest_hash = _get_file_hash(dest_file)
 
                         # Si le fichier destination n'existe pas ou si le contenu diffère
                         if source_hash != dest_hash:
