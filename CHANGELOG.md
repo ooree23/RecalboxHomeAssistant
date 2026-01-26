@@ -3,6 +3,13 @@
 > By Aurélien Tomassini, 2026.
 
 
+## v1.2.1 - ...
+
+
+- ...
+
+
+
 ## v1.2.0 - 26/01/2026 Breaking change
 
 > This versions changes the entity from `binary sensor` to `switch`.
