@@ -7,17 +7,18 @@ intents:
   RecalboxGameStatus:
     data:
       - sentences:
-          - "(what's | what is) the [current] game [on recalbox]"
-          - "(what | which game) (are you | am I) playiong [on recalbox]"
-          - "which game is (running | launched) [on recalbox]"
+          - "(what's | what is) the [current] game [on [the] recalbox]"
+          - "(what | which game) (are you | am I) playiong [on [the] recalbox]"
+          - "which game is (running | launched) [on [the] recalbox]"
   RecalboxCreateScreenshot:
     data:
       - sentences:
-          - "(take | make | do) a [game] screen shot [on recalbox]"
+          - "(take | make | do) a [game] (screen shot | screenshot) [on [the] recalbox]"
+          - "(take | make | do) a (screen shot | screenshot) of the [current] game [on [the] recalbox]"
   RecalboxLaunchGame:
     data:
       - sentences:
-          - "(run | launch | play | start) {game} on [the] {console} [on recalbox]"
+          - "(run | launch | play | play to | play at | start) {game} on [the] {console} [on [the] recalbox]"
           - "recalbox (run | launch | play | start) {game} on [the] {console}"
   RecalboxStopGame:
     data:

@@ -41,7 +41,9 @@ This repository allows you to integrate Recalbox in your Home Assistant :
     + [Get current game](#get-current-game)
     + [Launch a game](#launch-a-game)
     + [Stop the current game](#stop-the-current-game)
+    + [Pause/Resume the current game](#pauseresume-the-current-game)
     + [Take a screenshot](#take-a-screenshot)
+    + [Turn OFF recalbox](#turn-off-recalbox)
 - [Releases notes](#releases-notes)
 
 <!-- tocstop -->
@@ -50,7 +52,8 @@ This repository allows you to integrate Recalbox in your Home Assistant :
 
 - You should have a `Recalbox` OS available.  
   Tested only with Recalbox <mark>9.2.3</mark>, Raspberry Pi 3 B+.  
-  By default, should be accessible on `recalbox.local`
+  By default, should be accessible on `recalbox.local`.  
+  > Its API ports (80 and 81) and UDP ports (1337 and 55355) should be accessible in the local network (enabled by default).
 
 
 - You should have a `Home Assistant`.  
@@ -135,6 +138,12 @@ It uses the same services just listed.
 
 ## Usage 
 
+
+> Most of actions features use UDP commands.  
+> It requires to set `network_cmd_enable = true` in `retroarch.cfg`, as [documented in the Recalbox Wiki / GPIO](https://wiki.recalbox.com/en/tutorials/network/send-commands-to-emulators-with-gpio).  
+> Please double check the port configured in your device : this versions uses port 55355 for retroarch UDP commands.
+
+
 ### Dashboard card
 
 You can add a Recalbox card to your Home Assistant dashboard, in order to display the Recalbox status, game info, picture, etc.  
@@ -165,18 +174,20 @@ in `configuration.yaml`, to allow Home Assistant to read yaml files in `automati
 
 ### Assist (text/voice)
 
-> Since Janvuary 24th, a script auto installs the sentences and sentences updates.
+> Since v0.2.0, a script auto installs the sentences and sentences updates.
 > Check the dashboard custom card to see if the HA needs a restarts to update the sentences.
 
 
 #### Get current game
 
 Examples :
-  - "quel est le jeu en cours [sur recalbox]"
-  - "à quoi je joue [sur recalbox]"
-  - "qu'est-ce qui tourne sur la recalbox"
-  - "quel jeu est lancé [sur recalbox]"
-  - "quel est le jeu lancé [sur recalbox]"
+  - "What's the current game on Recalbox?"
+  - "Which game is running on the Recalbox?"
+  - "Quel est le jeu en cours [sur recalbox]"
+  - "A quoi je joue [sur recalbox]"
+  - "Qu'est-ce qui tourne sur la recalbox"
+  - "Quel jeu est lancé [sur recalbox]"
+  - "Quel est le jeu lancé [sur recalbox]"
 
 ![](docs/currentGameAssist.png)
 
@@ -184,6 +195,10 @@ Examples :
 #### Launch a game
 
 Examples :
+  - "Launch Sonic 3 on megadrive"
+  - "Run Final Fantasy on Playstation"
+  - "Start Mario on Nintendo 64 on Recalbox"
+  - "Play Mario on Nintendo 64 on Recalbox"
   - "Recalbox lance Pokemon Jaune sur Game Boy"
   - "Recalbox lance Mario 64 sur nintendo 64"
   - "Joue à Mario 64 sur la Nintendo 64 sur Recalbox"
@@ -200,12 +215,19 @@ Examples :
 
 
 Examples :
+  - "Quit the current game"
+  - "Stop the game on Recalbox"
   - "Arrête le jeu en cours sur Recalbox"
 
 
-> This uses a retroarch UDP command.  
-> It requires to set `network_cmd_enable = true` in `retroarch.cfg`, as [documented in the Recalbox Wiki / GPIO](https://wiki.recalbox.com/en/tutorials/network/send-commands-to-emulators-with-gpio).  
-> Please double check the port configured in your device : this versions uses port 55355 for retroarch UDP commands.
+
+#### Pause/Resume the current game
+
+
+Examples :
+  - "Pause the current game"
+  - "Resume the game on Recalbox"
+  - "Mets le jeu en pause"
 
 
 #### Take a screenshot
@@ -214,16 +236,28 @@ You can make a game screenshot, simply pushing the screenshot button on your das
 You can also make a screenshot via Assist. 
 
 Examples :
-
+  - "Take a screenshot of the game"
+  - "Make a game screen shot"
   - "Prends une capture d'écran du jeu"
   - "Fais un screenshot du jeu"
 
-> Since January 26th 2026, the screenshot is done with a script :
+> We try doing the screenshot in two ways :
 > - trying first a UDP command screenshot, which is more integrated
 > - if fails because of wrong port, then it tries using API.  
 >   Note about API : on Recalbox 9.2.3 or Raspberry Pi 3, the screenshots via API are broken (also in the Recalbox Web Manager). That's why I chose UDP first.
 
-    
+
+#### Turn OFF recalbox
+
+> This uses the Home Assistant intent to turn OFF the Recalbox, recognized as a switch.
+> Please ensure that you give an easy name of your Recalbox Entity, to help
+> Home Assistant Assist to recognize the device you want to turn OFF.
+
+Examples :
+- "Turn off Recalbox"
+- "Eteins Recalbox"
+
+
 
 ## Releases notes
 

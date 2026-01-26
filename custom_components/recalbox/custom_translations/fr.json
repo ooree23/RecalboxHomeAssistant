@@ -27,8 +27,14 @@
     "quit_game_requested": [
       "Retour au menu"
     ],
+    "quit_game_failed": [
+      "Echec de la demande de retour au menu."
+    ],
     "pause_game_requested": [
       "Pause demandée"
+    ],
+    "pause_game_failed": [
+      "Echec de la demande de pause."
     ],
     "no_game_on_system": [
       "Aucun jeu trouvé sur la console {console}.",
@@ -47,6 +53,11 @@
     ],
     "list_roms_failed": [
       "Impossible de récupérer les roms de la Recalbox. Vérifiez qu'elle est bien allumée, et connectée au réseau."
+    ]
+  },
+  "errors": {
+    "power_off_not_implemented_message": [
+      "L'allumage de la Recalbox n'est pas supporté à distance."
     ]
   }
 }

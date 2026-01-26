@@ -116,11 +116,10 @@ class RecalboxCard extends HTMLElement {
         <div class="info-row">
           <ha-icon icon="mdi:gamepad-variant-outline"></ha-icon>
           <div class="info-text"><div>${recalboxName}</div><div class="info-value">${i18n.subtitle}</div></div>
-          <ha-switch
-            ${isOn ? '' : 'disabled'}
-            ${isOn ? 'checked' : ''}
-            style="pointer-events: none;"
-          ></ha-switch>
+          <ha-icon
+            icon="mdi:power"
+            style="color: ${isOn ? 'var(--state-icon-color)' : 'var(--state-unavailable-color)'}; margin: 0;">
+          </ha-icon>
         </div>
         ${isOn ? `
           <hr/>
@@ -134,7 +133,7 @@ class RecalboxCard extends HTMLElement {
     if (needsRestart) {
       // On insère un petit bandeau d'alerte en haut de la carte
       const alertHtml = `
-        <div style="background-color: var(--secondary-background-color); color: white; padding: 12px; border-radius: 4px; margin: 10px; font-size: 0.8em; display: flex; align-items: center;">
+        <div style="background-color: var(--secondary-background-color); color: white; padding: 12px; border-radius: 6px; border: solid 1px grey; margin: 10px; font-size: 0.8em; display: flex; align-items: center;">
           <ha-icon icon="mdi:alert" style="margin-right: 16px;"></ha-icon>
           ${i18n.rebootRequired}
         </div>

@@ -22,8 +22,14 @@
     "quit_game_requested": [
       "Returning to the menu"
     ],
+    "quit_game_failed": [
+      "Menu request failed."
+    ],
     "pause_game_requested": [
-      "Pause requested"
+      "Pause/Resume requested"
+    ],
+    "pause_game_failed": [
+      "Cannot request pause/resume."
     ],
     "no_game_on_system": [
       "No games found on the {console}.",
@@ -40,6 +46,11 @@
     ],
     "list_roms_failed": [
       "Cannot get roms list from Recalbox. Double check it is turned ON, and connected to network."
+    ]
+  },
+  "errors": {
+    "power_off_not_implemented_message": [
+      "Cannot turn on Recalbox remotely."
     ]
   }
 }
