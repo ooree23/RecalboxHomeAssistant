@@ -41,7 +41,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
     }
 
-    # On enregistre les phrases Assist
     await async_setup_intents(hass)
 
     # On ajoute le switch à la liste des plateformes
@@ -105,7 +104,10 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Suppression de l'intégration."""
-    return await hass.config_entries.async_unload_platforms(entry, ["binary_sensor"])
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    if unload_ok:
+        hass.data[DOMAIN]["instances"].pop(entry.entry_id)
+    return unload_ok
 
 
 async def update_listener(hass: HomeAssistant, entry: ConfigEntry):
