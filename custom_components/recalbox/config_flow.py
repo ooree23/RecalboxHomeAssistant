@@ -1,6 +1,17 @@
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.core import callback
 from .const import DOMAIN
+
+
+# Schéma par défaut réutilisable
+DATA_SCHEMA = vol.Schema({
+    vol.Required("host", default="recalbox.local"): str,
+    vol.Required("api_port_1", default=80): int,
+    vol.Required("api_port_2", default=81): int,
+    vol.Required("udp_recalbox", default=1337): int,
+    vol.Required("udp_emulstation", default=55355): int,
+})
 
 class RecalboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Gère le formulaire d'installation."""
@@ -13,11 +24,36 @@ class RecalboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             # Ici tu pourrais ajouter un test de connexion à l'IP
             return self.async_create_entry(title=f"Recalbox ({user_input['host']})", data=user_input)
 
-        # Définition du formulaire
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema({
-                vol.Required("host", default="recalbox.local"): str,  # On demande l'IP ou le hostname
-            }),
+            data_schema=DATA_SCHEMA,
             errors=errors,
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        return RecalboxOptionsFlowHandler(config_entry)
+
+
+class RecalboxOptionsFlowHandler(config_entries.OptionsFlow):
+    def __init__(self, config_entry):
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input=None):
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        # Pré-remplir avec les valeurs actuelles (data ou options)
+        current_config = {**self.config_entry.data, **self.config_entry.options}
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema({
+                vol.Required("host", default=current_config.get("host")): str,
+                vol.Required("api_port_1", default=current_config.get("api_port_1", 80)): int,
+                vol.Required("api_port_2", default=current_config.get("api_port_2", 81)): int,
+                vol.Required("udp_recalbox", default=current_config.get("udp_recalbox", 1337)): int,
+                vol.Required("udp_emulstation", default=current_config.get("udp_emulstation", 55355)): int,
+            }),
         )
