@@ -120,7 +120,8 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
 
     async def request_shutdown(self) -> bool:
         _LOGGER.debug("Shut down Recalbox via API")
-        if await self._api.post_api("/api/system/shutdown", port=80) :
+        port_api = self._config_entry.options.get("api_port_1", 80)
+        if await self._api.post_api("/api/system/shutdown", port=port_api) :
             await asyncio.sleep(5)
             await self._force_status_off()
             return True
@@ -130,7 +131,8 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
 
     async def request_reboot(self) -> bool :
         _LOGGER.debug("Reboot Recalbox via API")
-        if await self._api.post_api("/api/system/reboot", port=80) :
+        port_api = self._config_entry.options.get("api_port_1", 80)
+        if await self._api.post_api("/api/system/reboot", port=port_api) :
             await asyncio.sleep(5)
             await self._force_status_off()
             return True
@@ -140,12 +142,14 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
 
     async def request_screenshot(self) -> bool :
         _LOGGER.debug("Screenshot UDP, puis API si échec")
+        port_api = self._config_entry.options.get("api_port_2", 81)
+        port_udp = self._config_entry.options.get("udp_emulstation", 55355)
         # 1. Test UDP
-        success = await self._api.send_udp_command(55355, "SCREENSHOT")
+        success = await self._api.send_udp_command(port_udp, "SCREENSHOT")
         # 2. Fallback API
         if not success:
-            _LOGGER.warning("Screenshot UDP command not sent on port 55355. Please check your Recalbox is has this port running. Will now try a screenshot via API...")
-            return await self._api.post_api("/api/media/takescreenshot", port=81)
+            _LOGGER.warning(f"Screenshot UDP command not sent on port {port_udp}. Please check your Recalbox is has this port running. Will now try a screenshot via API...")
+            return await self._api.post_api("/api/media/takescreenshot", port=port_api)
         else:
             _LOGGER.debug("Screenshot UDP command sent successfully to Recalbox")
             return True
@@ -153,21 +157,25 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
 
     async def request_quit_current_game(self) -> bool :
         _LOGGER.debug("Quit current game via UDP")
-        return await self._api.send_udp_command(55355, "QUIT")
+        port_udp = self._config_entry.options.get("udp_emulstation", 55355)
+        return await self._api.send_udp_command(port_udp, "QUIT")
 
 
     async def request_pause_game(self) -> bool :
         _LOGGER.debug("(Un)Pause current game via UDP")
-        return await self._api.send_udp_command(55355, "PAUSE_TOGGLE")
+        port_udp = self._config_entry.options.get("udp_emulstation", 55355)
+        return await self._api.send_udp_command(port_udp, "PAUSE_TOGGLE")
 
 
     # Renvoie le texte pour Assist
     async def search_and_launch_game_by_name(self, console, game_query, lang=None) -> str :
         _LOGGER.debug(f"Try to launch game {game_query} on system {console}")
         translator:RecalboxTranslator = self.hass.data[DOMAIN]["translator"]
+        port_api = self._config_entry.options.get("api_port_2", 81)
+        port_udp = self._config_entry.options.get("udp_recalbox", 1337)
         # Récupérer la liste des roms via l'API (HTTP GET)
         try:
-            roms = await self._api.get_roms(console)
+            roms = await self._api.get_roms(console, port_api)
             if not roms:
                 return translator.translate(
                     "intent_response.no_game_on_system",
@@ -200,7 +208,7 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
         if target:
             _LOGGER.debug(f"Game found, with name {target['name']}, on system {console}. Try to launch via UDP command...")
             try:
-                await self._api.send_udp_command(1337, f"START|{console}|{target['path']}")
+                await self._api.send_udp_command(port_udp, f"START|{console}|{target['path']}")
                 _LOGGER.debug(f"Game launched !")
                 return translator.translate(
                     "intent_response.game_launched_success",

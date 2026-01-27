@@ -38,8 +38,8 @@ class RecalboxAPI:
                 raise
 
 
-    async def get_roms(self, console):
-        url = f"http://{self.host}:81/api/systems/{console}/roms"
+    async def get_roms(self, console, port=81):
+        url = f"http://{self.host}:{port}/api/systems/{console}/roms"
         _LOGGER.debug(f"API GET roms from {url}")
         async with aiohttp.ClientSession() as session:
             try:
