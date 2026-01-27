@@ -33,7 +33,7 @@ class RecalboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
-        return RecalboxOptionsFlowHandler(config_entry)
+        return RecalboxOptionsFlowHandler()
 
 
 class RecalboxOptionsFlowHandler(config_entries.OptionsFlow):
@@ -42,7 +42,7 @@ class RecalboxOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # Pré-remplir avec les valeurs actuelles (data ou options)
+        # self.config_entry est accessible automatiquement grâce à l'héritage
         current_config = {**self.config_entry.data, **self.config_entry.options}
 
         return self.async_show_form(

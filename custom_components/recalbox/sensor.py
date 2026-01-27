@@ -25,3 +25,13 @@ class RecalboxDiagnosticIP(SensorEntity):
         return {
             "identifiers": {(DOMAIN, self._config_entry.entry_id)},
         }
+
+    @property
+    def native_value(self):
+        """Retourne toujours la valeur actuelle de la config."""
+        # On fusionne pour être sûr d'avoir les options modifiées
+        return self._config_entry.options.get("host", self._config_entry.data.get("host"))
+
+    @property
+    def name(self):
+        return "Host"
