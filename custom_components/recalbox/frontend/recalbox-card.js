@@ -11,7 +11,10 @@ const TRANSLATIONS = {
       "shutdown": "Éteindre",
       "reboot": "Redémarrer",
       "screenshot": "Capture",
-      "stop": "Stop"
+      "pause": "Pause",
+      "save": "Enregistrer",
+      "load": "Restaurer",
+      "stop": "Quitter le jeu"
     },
     "footer": {
         "onHardware": "sur",
@@ -30,7 +33,10 @@ const TRANSLATIONS = {
       "shutdown": "Shutdown",
       "reboot": "Reboot",
       "screenshot": "Screenshot",
-      "stop": "Stop"
+      "stop": "Quit game",
+      "pause": "Pause",
+      "save": "Save",
+      "load": "Restore",
     },
     "footer": {
         "onHardware": "on",
@@ -55,6 +61,9 @@ class RecalboxCard extends HTMLElement {
     const showTurnOffButton = this.config.showTurnOffButton ?? true;
     const showRebootButton = this.config.showRebootButton ?? true;
     const showScreenshotButton = this.config.showScreenshotButton ?? true;
+    const showPauseGameButton = this.config.showPauseGameButton ?? true;
+    const showLoadGameButton = this.config.showLoadGameButton ?? true;
+    const showSaveGameButton = this.config.showSaveGameButton ?? true;
     const showQuitGameButton = this.config.showQuitGameButton ?? true;
 
     if (!state) {
@@ -81,9 +90,11 @@ class RecalboxCard extends HTMLElement {
             .game-preview { text-align: center; padding: 10px 0; margin: 10px -16px; }
             .game-preview img { max-width: 90%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
-            .card-actions { display: flex; gap: 8px; justify-content: center; padding: 12px; border-top: 1px solid var(--divider-color); border-radius: 0 0 12px 12px; }
+            .card-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 12px; border-top: 1px solid var(--divider-color); border-radius: 0 0 12px 12px; }
             .action-button { display: flex; flex-direction: row; gap: 6px; border-radius: 20px; padding: 2px 12px; align-items: center; cursor: pointer; font-size: 10px; text-transform: uppercase; color: var(--primary-text-color); background-color: var(--chip-background-color); }
             .action-button ha-icon { color: var(--_leading-icon-color); margin-bottom: 4px; --mdc-icon-size: 18px; }
+            .game-icon-button { padding: 0 2px; }
+            .game-icon-button:hover { background-color: var(--chip-background-color); }
 
             .card-markdown-footer { padding: 24px 16px 16px; font-size: 0.8em; color: var(--secondary-text-color); line-height: 1.4; }
             .card-markdown-footer hr { border: 0; border-top: 1px solid var(--divider-color); margin: 16px 0; }
@@ -143,14 +154,15 @@ class RecalboxCard extends HTMLElement {
     `;
 
     if (needsRestart && showRestartRequiredSuggestion) {
-      // On insère un petit bandeau d'alerte en haut de la carte
+      // insertions d'un petit bandeau d'alerte en haut de la carte
+      // Uniquement si on a effectué une mise à jour des sentences,
+      // et que l'utilisateur a accepté d'afficher ces alertes
       const alertHtml = `
         <div style="background-color: var(--secondary-background-color); color: white; padding: 12px; border-radius: 6px; border: solid 1px grey; margin: 10px; font-size: 0.8em; display: flex; align-items: center;">
           <ha-icon icon="mdi:alert" style="margin-right: 16px;"></ha-icon>
           ${i18n.rebootRequired}
         </div>
       `;
-      // Injecter ce HTML dans ta carte
       this.content.innerHTML += alertHtml;
     }
 
@@ -179,14 +191,24 @@ class RecalboxCard extends HTMLElement {
     if (isOn) {
       this.actions.style.display = "flex";
       this.actions.innerHTML = `
-        <div class="action-button" id="btn-power-off" ` + (showTurnOffButton ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:power"></ha-icon>${i18n.buttons.shutdown}</div>
-        <div class="action-button" id="btn-reboot" ` + (showRebootButton ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:restart"></ha-icon>${i18n.buttons.reboot}</div>
-        <div class="action-button" id="btn-snap" ` + ((showScreenshotButton && isAGameRunning) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:camera"></ha-icon>${i18n.buttons.screenshot}</div>
-        <div class="action-button" id="btn-stop" ` + ((showQuitGameButton && isAGameRunning) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:location-exit"></ha-icon>${i18n.buttons.stop}</div>
+        <div class="action-button" id="btn-power-off" ` + ((showTurnOffButton) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:power"></ha-icon>${i18n.buttons.shutdown}</div>
+        <div class="action-button" id="btn-reboot" ` + ((showRebootButton) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:restart"></ha-icon>${i18n.buttons.reboot}</div>
+
+        <div class="action-button" ` + (isAGameRunning ? '' : 'style="display:none"')+ `>
+            ${i18n.game} &nbsp;
+            <div class="game-icon-button" title="${i18n.buttons.screenshot}" id="btn-snap" ` + ((showScreenshotButton) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:camera"></ha-icon></div>
+            <div class="game-icon-button" title="${i18n.buttons.pause}" id="btn-pause" ` + ((showPauseGameButton) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:play-pause"></ha-icon></div>
+            <div class="game-icon-button" title="${i18n.buttons.save}" id="btn-save" ` + ((showSaveGameButton) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:content-save"></ha-icon></div>
+            <div class="game-icon-button" title="${i18n.buttons.load}" id="btn-load" ` + ((showLoadGameButton) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:restore"></ha-icon></div>
+            <div class="game-icon-button" title="${i18n.buttons.stop}" id="btn-stop" ` + ((showQuitGameButton) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:stop"></ha-icon></div>
+        </div>
       `;
       this.actions.querySelector('#btn-power-off').onclick = () => hass.callService('recalbox', 'shutdown', { entity_id: entityId });
       this.actions.querySelector('#btn-reboot').onclick = () => hass.callService('recalbox', 'reboot', { entity_id: entityId });
       this.actions.querySelector('#btn-snap').onclick = () => hass.callService('recalbox', 'screenshot', { entity_id: entityId });
+      this.actions.querySelector('#btn-pause').onclick = () => hass.callService('recalbox', 'pause_resume_game', { entity_id: entityId });
+      this.actions.querySelector('#btn-save').onclick = () => hass.callService('recalbox', 'save_state', { entity_id: entityId });
+      this.actions.querySelector('#btn-load').onclick = () => hass.callService('recalbox', 'load_state', { entity_id: entityId });
       this.actions.querySelector('#btn-stop').onclick = () => hass.callService('recalbox', 'quit_game', { entity_id: entityId });
     } else {
       this.actions.style.display = "none";
@@ -227,6 +249,9 @@ class RecalboxCard extends HTMLElement {
       showTurnOffButton: true,
       showRebootButton: true,
       showScreenshotButton: true,
+      showPauseGameButton: true,
+      showLoadGameButton: true,
+      showSaveGameButton: true,
       showQuitGameButton: true,
     };
   }
