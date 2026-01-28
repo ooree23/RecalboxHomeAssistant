@@ -55,6 +55,9 @@ class RecalboxCard extends HTMLElement {
     const showTurnOffButton = this.config.showTurnOffButton ?? true;
     const showRebootButton = this.config.showRebootButton ?? true;
     const showScreenshotButton = this.config.showScreenshotButton ?? true;
+    const showPauseGameButton = this.config.showPauseGameButton ?? true;
+    const showLoadGameButton = this.config.showLoadGameButton ?? true;
+    const showSaveGameButton = this.config.showSaveGameButton ?? true;
     const showQuitGameButton = this.config.showQuitGameButton ?? true;
 
     if (!state) {
@@ -183,11 +186,17 @@ class RecalboxCard extends HTMLElement {
         <div class="action-button" id="btn-power-off" ` + (showTurnOffButton ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:power"></ha-icon>${i18n.buttons.shutdown}</div>
         <div class="action-button" id="btn-reboot" ` + (showRebootButton ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:restart"></ha-icon>${i18n.buttons.reboot}</div>
         <div class="action-button" id="btn-snap" ` + ((showScreenshotButton && isAGameRunning) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:camera"></ha-icon>${i18n.buttons.screenshot}</div>
+        <div class="action-button" id="btn-pause" ` + ((showPauseGameButton && isAGameRunning) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:play-pause"></ha-icon>${i18n.buttons.pause}</div>
+        <div class="action-button" id="btn-save" ` + ((showSaveGameButton && isAGameRunning) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:content-save"></ha-icon>${i18n.buttons.save}</div>
+        <div class="action-button" id="btn-load" ` + ((showLoadGameButton && isAGameRunning) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:restore"></ha-icon>${i18n.buttons.load}</div>
         <div class="action-button" id="btn-stop" ` + ((showQuitGameButton && isAGameRunning) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:location-exit"></ha-icon>${i18n.buttons.stop}</div>
       `;
       this.actions.querySelector('#btn-power-off').onclick = () => hass.callService('recalbox', 'shutdown', { entity_id: entityId });
       this.actions.querySelector('#btn-reboot').onclick = () => hass.callService('recalbox', 'reboot', { entity_id: entityId });
       this.actions.querySelector('#btn-snap').onclick = () => hass.callService('recalbox', 'screenshot', { entity_id: entityId });
+      this.actions.querySelector('#btn-pause').onclick = () => hass.callService('recalbox', 'pause_resume_game', { entity_id: entityId });
+      this.actions.querySelector('#btn-save').onclick = () => hass.callService('recalbox', 'save_state', { entity_id: entityId });
+      this.actions.querySelector('#btn-load').onclick = () => hass.callService('recalbox', 'load_state', { entity_id: entityId });
       this.actions.querySelector('#btn-stop').onclick = () => hass.callService('recalbox', 'quit_game', { entity_id: entityId });
     } else {
       this.actions.style.display = "none";
@@ -228,6 +237,9 @@ class RecalboxCard extends HTMLElement {
       showTurnOffButton: true,
       showRebootButton: true,
       showScreenshotButton: true,
+      showPauseGameButton: true,
+      showLoadGameButton: true,
+      showSaveGameButton: true,
       showQuitGameButton: true,
     };
   }
