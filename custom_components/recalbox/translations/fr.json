@@ -1,0 +1,34 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurer nouvelle Recalbox",
+        "data": {
+          "host": "Adresse IP ou nom d'hôte",
+          "api_port_os": "Port API Système (arrêt, redémarrage)",
+          "api_port_gamesmanager": "Port API Jeux (liste de roms, captures)",
+          "udp_recalbox": "Port UDP Recalbox",
+          "udp_emulstation": "Port UDP EmulationStation",
+          "test_connection": "Tester la connexion"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de se connecter à la Recalbox que vous avez définie (échec du ping, ou ports non accessibles)."
+    }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Modifier les paramètres de la Recalbox",
+        "data": {
+          "host": "Adresse IP ou nom d'hôte",
+          "api_port_os": "Port API Système (arrêt, redémarrage)",
+          "api_port_gamesmanager": "Port API Jeux (liste de roms, captures)",
+          "udp_recalbox": "Port UDP Recalbox",
+          "udp_emulstation": "Port UDP EmulationStation"
+        }
+      }
+    }
+  }
+}

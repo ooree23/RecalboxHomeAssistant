@@ -128,7 +128,8 @@ It uses the same services just listed.
        (new "Recalbox" Integration will be available after restart in the Devices & Service menu).
       
      - Go to Devices & Services menu, "+ add integration", and search for "Recalbox".
-       Add the IP of your Recalbox, or let the default "recalbox.local".
+       You will be asked for Host/IP of your Recalbox (you should let the default "recalbox.local"), and ports can be changed if needed.
+       If you can, have your Recalbox ON, and then let the "Test connection" checkbox checked to test host and ports.
        
        > A second reboot could be necessary, depending on what's shown on dashboard custom card,
        > to apply the newly installed custom_sentences for Assist.

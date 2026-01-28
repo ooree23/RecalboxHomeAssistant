@@ -9,14 +9,14 @@ class RecalboxAPI:
     def __init__(self,
                  host: str = "recalbox.local",
                  api_port_os: int = 80,
-                 api_port_webmanager: int = 81,
+                 api_port_gamesmanager: int = 81,
                  udp_recalbox: int = 1337,
                  udp_emulstation: int = 55355
                  ):
         self.host = host
-        self.api_port_os = api_port_os
-        self.api_port_webmanager = api_port_webmanager
-        self.udp_recalbox = udp_recalbox
+        self.api_port_os = api_port_os # Arrêter, Reboot de Recalbox...
+        self.api_port_gamesmanager = api_port_gamesmanager # Lister les roms, demander un screenshot...
+        self.udp_recalbox = udp_recalbox # Lancer une ROM
         self.udp_emulstation = udp_emulstation
 
     async def send_udp_command(self, port, message):
@@ -76,4 +76,34 @@ class RecalboxAPI:
             return process.returncode == 0
         except:
             _LOGGER.debug(f"Failed to PING {self.host}")
-            return False;
+            return False
+
+
+    async def testPorts(self) -> bool:
+        try:
+            _LOGGER.info(f"Testing TCP+UDP ports on {self.host}...")
+            TCP_PORTS = [self.api_port_os, self.api_port_gamesmanager]
+            UDP_PORTS = [self.udp_recalbox, self.udp_emulstation]
+            for port in TCP_PORTS:
+                try:
+                    _LOGGER.debug(f"Testing TCP port {port} on {self.host}")
+                    conn = asyncio.open_connection(self.host, port)
+                    _reader, writer = await asyncio.wait_for(conn, timeout=1.0)
+                    writer.close()
+                    await writer.wait_closed()
+                except Exception as e:
+                    _LOGGER.error(f"TCP Port {port} is closed or unreachable: {e}")
+                    return False
+
+            # En UDP, on ne peut pas vraiment savoir si le port est "ouvert"
+            # sans réponse du serveur, mais on peut vérifier si l'interface réseau accepte l'envoi.
+            for port in UDP_PORTS:
+                success = await self.send_udp_command(port, "PING") # Envoi d'un message neutre
+                if not success:
+                    _LOGGER.error(f"UDP Port {port} is unreachable")
+                    return False
+
+            return True
+        except:
+            _LOGGER.debug(f"Failed to PING ports of {self.host}")
+            return False
