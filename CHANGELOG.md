@@ -5,7 +5,7 @@
 
 ## v1.2.7 - ...
 
-
+**Recalbox Card settings**
 - When adding Recalbox card to dashboard, pre-fill the yaml required structure (type, entity, title)
 - Add Recalbox Card options to display or not buttons
 - Add Recalbox Card option to display Rom path (false by default)
