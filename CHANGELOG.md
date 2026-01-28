@@ -6,7 +6,8 @@
 ## v1.2.5 - ...
 
 
-- ...
+- Rename `api_port_webmanager` configuration attribute
+- Use `api_port_webmanager` in the web manager link in dashboard Recalbox Card
 
 
 ## v1.2.4 - 28/01/2026
@@ -16,7 +17,7 @@
 
 - Add IP address/Host of the Recalbox as an attribute. 
   So it will be available to display in the entity, or to use in scripts / automations.
-- Add IP Address/Host as a Diagnostic entity, to be more visible in the device page
+- Add IP Address/Host and ports as a Diagnostic entity, to be more visible in the device page
 - Improve device infos box
 - [#2](https://github.com/ooree23/RecalboxHomeAssistant/issues/2) and [#3](https://github.com/ooree23/RecalboxHomeAssistant/issues/3) :
   Add settings to let the user choose different host, and ports for API and UDP, if he configured different ones on Recalbox.
