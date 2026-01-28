@@ -79,12 +79,12 @@ The scripts reads the needed data for game information, and sends a MQTT message
 Home Assistant can then update its "Recalbox" entity with the current game.
 
 > The attributes read by Home Assistant are, through this JSON :
-> - `game `: name of the running game, user friendly. null if no game launched.
-> - `console `: name of the console, user friendly. null if no game launched, or "Kodi"
-> - `rom `: path to the current rom. null if no game launched.
-> - `genre `: genre of the running game, user friendly. null if no game launched.
-> - `genreId `: genreId of the running game. null if no game launched. Can be useful for automation where you want to set lights colors depending on type of game for example.
-> - `imageUrl `: URL to the image of the current game. null if no game running. The picture exists only if the game has been scrapped.
+> - `game`
+> - `console`
+> - `rom`
+> - `genre`
+> - `genreId`
+> - `imageUrl`
 > - `recalboxVersion` : Version of the Recalbox OS
 > - `hardware` : Device running the Recalbox
 
@@ -169,7 +169,7 @@ title: Recalbox
 subtitle: ""
 # Other display options fill be automatically shown in your yaml
 ```
-And you will get this (in French or English, depending on your user language)
+And you will get this (in English or French, depending on your user language)
 
 ![](docs/example.png)
 
