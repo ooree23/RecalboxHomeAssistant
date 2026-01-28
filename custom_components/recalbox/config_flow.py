@@ -33,7 +33,7 @@ class RecalboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     udp_recalbox=user_input["udp_recalbox"],
                     udp_emulstation=user_input["udp_emulstation"]
                 )
-                is_valid = await api_temp.ping()
+                is_valid = await api_temp.ping() and await api_temp.testPorts()
             else:
                 is_valid = True
 
@@ -50,7 +50,7 @@ class RecalboxConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="user",
-            data_schema=DATA_SCHEMA_CREATION,
+            data_schema=self.add_suggested_values_to_schema(DATA_SCHEMA_CREATION, user_input),
             errors=errors,
         )
 

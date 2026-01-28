@@ -77,3 +77,33 @@ class RecalboxAPI:
         except:
             _LOGGER.debug(f"Failed to PING {self.host}")
             return False
+
+
+    async def testPorts(self) -> bool:
+        try:
+            _LOGGER.info(f"Testing TCP+UDP ports on {self.host}...")
+            TCP_PORTS = [self.api_port_os, self.api_port_gamesmanager]
+            UDP_PORTS = [self.udp_recalbox, self.udp_emulstation]
+            for port in TCP_PORTS:
+                try:
+                    _LOGGER.debug(f"Testing TCP port {port} on {self.host}")
+                    conn = asyncio.open_connection(self.host, port)
+                    _reader, writer = await asyncio.wait_for(conn, timeout=1.0)
+                    writer.close()
+                    await writer.wait_closed()
+                except Exception as e:
+                    _LOGGER.error(f"TCP Port {port} is closed or unreachable: {e}")
+                    return False
+
+            # En UDP, on ne peut pas vraiment savoir si le port est "ouvert"
+            # sans réponse du serveur, mais on peut vérifier si l'interface réseau accepte l'envoi.
+            for port in UDP_PORTS:
+                success = await self.send_udp_command(port, "PING") # Envoi d'un message neutre
+                if not success:
+                    _LOGGER.error(f"UDP Port {port} is unreachable")
+                    return False
+
+            return True
+        except:
+            _LOGGER.debug(f"Failed to PING ports of {self.host}")
+            return False

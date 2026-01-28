@@ -14,7 +14,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Connot reach the configured Recalbox (ping failed)."
+      "cannot_connect": "Cannot reach the configured Recalbox (ping failed, or ports not open)."
     }
   },
   "options": {

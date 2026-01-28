@@ -14,7 +14,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Impossible de se connecter à la Recalbox que vous avez définie (échec du ping)."
+      "cannot_connect": "Impossible de se connecter à la Recalbox que vous avez définie (échec du ping, ou ports non accessibles)."
     }
   },
   "options": {
