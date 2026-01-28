@@ -157,8 +157,10 @@ Fill the yaml :
 ```yaml
 type: custom:recalbox-card
 entity: switch.recalbox_recalbox_local
-# Optionnel : si vous voulez changer le titre de la carte
+# Optional : if you want to change card title, and Recalbox subtitle
 title: Recalbox
+subtitle: ""
+# Other display options fill be automatically shown in your yaml
 ```
 And you will get this (in French or English, depending on your user language)
 
