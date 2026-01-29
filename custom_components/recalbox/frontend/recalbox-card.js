@@ -20,7 +20,39 @@ const TRANSLATIONS = {
         "onHardware": "sur",
         "webManagerLabel": "Web manager Recalbox",
         "integrationLabel": "GitHub de l'intégration"
-    }
+    },
+    "form_sections": {
+        "system_buttons": "Affichage des boutons système",
+        "in_game_buttons": "Affichage des boutons en jeu",
+    },
+    "form_label": {
+        "entity": "Entité Recalbox",
+        "title": "Titre de la carte",
+        "subtitle": "Sous-titre",
+        "showGameGenre": "Afficher le genre",
+        "showRomPath": "Afficher le chemin vers la ROM",
+        "showRestartRequiredSuggestion": "Suggestion de redémarrage suite aux mises à jour des phrases Assist",
+        "showTurnOffButton": "Éteindre",
+        "showRebootButton": "Redémarrer",
+        "showScreenshotButton": "Capture",
+        "showPauseGameButton": "Pause",
+        "showLoadGameButton": "Restaurer",
+        "showSaveGameButton": "Enregistrer",
+        "showQuitGameButton": "Quitter le jeu",
+    },
+    "form_description": {
+        "entity": "Doit être une entité créée à partir de l'intégration Recalbox",
+        "showGameGenre": "Afficher ou non le genre du jeu (textuellement) dans la section du jeu en cours.",
+        "showRomPath": "Afficher ou non le chemin de stockage de la ROM lancée, dans la section du jeu en cours.",
+        "showRestartRequiredSuggestion": "Lorsque l'intégration Recalbox est installée, ou mise à jour, elle installe les fichiers nécessaires à la reconnaissances des phrases Assist. Si ces phrases ont été mises à jour, Home Assistant pourrait nécessiter un redémarrage pour les prendre en compte (chargement au lancement).",
+        "showTurnOffButton": "Demande d'extinction par appel à l'API Recalbox",
+        "showRebootButton": "Demande de redémarrage par appel à l'API Recalbox",
+        "showScreenshotButton": "Demande de screenshot du jeu en cours, par UDP (sinon, par l'API si l'envoi UDP a échoué)",
+        "showPauseGameButton": "Pause/reprise de l'émulateur en cours (par UDP)",
+        "showLoadGameButton": "Restaurer le dernier point de sauvegarde par UDP (équivalent à HK + X)",
+        "showSaveGameButton": "Créer un point de sauvegarde par UDP (équivalent à HK + Y)",
+        "showQuitGameButton": "Quitter le jeu en cours par UDP (retour au menu)",
+    },
   },
   "en": {
     "subtitle": "All-in-one retro-gaming console",
@@ -30,19 +62,51 @@ const TRANSLATIONS = {
     "romPath": "Rom",
     "rebootRequired": "New Assist sentences have been installed. You will have to restart Home Assistant again to have access to the new intents on text/voice commands.",
     "buttons": {
-      "shutdown": "Shutdown",
+      "shutdown": "Power off",
       "reboot": "Reboot",
       "screenshot": "Screenshot",
       "stop": "Quit game",
       "pause": "Pause",
-      "save": "Save",
-      "load": "Restore",
+      "save": "Save State",
+      "load": "Load State",
     },
     "footer": {
         "onHardware": "on",
         "webManagerLabel": "Recalbox web manager",
         "integrationLabel": "GitHub integration"
-    }
+    },
+    "form_sections": {
+        "system_buttons": "System buttons display",
+        "in_game_buttons": "In-game buttons display"
+    },
+    "form_label": {
+        "entity": "Recalbox Entity",
+        "title": "Card Title",
+        "subtitle": "Subtitle",
+        "showGameGenre": "Show genre",
+        "showRomPath": "Show ROM path",
+        "showRestartRequiredSuggestion": "Restart suggestion on Assist phrase updates",
+        "showTurnOffButton": "Power off",
+        "showRebootButton": "Reboot",
+        "showScreenshotButton": "Screenshot",
+        "showPauseGameButton": "Pause",
+        "showLoadGameButton": "Load State",
+        "showSaveGameButton": "Save State",
+        "showQuitGameButton": "Quit game"
+    },
+    "form_description": {
+        "entity": "Must be an entity created by the Recalbox integration",
+        "showGameGenre": "Whether to display the game genre (text) in the current game section.",
+        "showRomPath": "Whether to display the storage path of the running ROM in the current game section.",
+        "showRestartRequiredSuggestion": "When the Recalbox integration is installed or updated, it installs the files required for Assist phrase recognition. If these phrases have been updated, Home Assistant may require a restart to load them.",
+        "showTurnOffButton": "Request shutdown via Recalbox API",
+        "showRebootButton": "Request reboot via Recalbox API",
+        "showScreenshotButton": "Request a screenshot of the current game via UDP (falls back to API if UDP fails)",
+        "showPauseGameButton": "Pause/resume the current emulator (via UDP)",
+        "showLoadGameButton": "Restore the last save point via UDP (equivalent to HK + X)",
+        "showSaveGameButton": "Create a save point via UDP (equivalent to HK + Y)",
+        "showQuitGameButton": "Quit the current game via UDP (return to menu)"
+    },
   }
 };
 
@@ -307,6 +371,7 @@ class RecalboxCardEditor extends HTMLElement {
     this._form.data = this._config;
     this._form.schema = this._getSchema();
     this._form.computeLabel = (s) => this._computeLabel(s);
+    this._form.computeHelper = (s) => this._computeHelper(s);
     this._form.addEventListener("value-changed", (ev) => {
       const event = new CustomEvent("config-changed", {
         detail: { config: ev.detail.value },
@@ -319,27 +384,24 @@ class RecalboxCardEditor extends HTMLElement {
   }
 
   _computeLabel(schema) {
-    const labels = {
-      entity: "Entité Recalbox",
-      title: "Titre de la carte",
-      subtitle: "Sous-titre",
-      showGameGenre: "Afficher le genre",
-      showRomPath: "Afficher le chemin de la ROM",
-      showRestartRequiredSuggestion: "Suggérer le redémarrage",
-      showTurnOffButton: "Bouton Éteindre",
-      showRebootButton: "Bouton Redémarrer",
-      showScreenshotButton: "Bouton Capture",
-      showPauseGameButton: "Bouton Pause",
-      showLoadGameButton: "Bouton Restaurer",
-      showSaveGameButton: "Bouton Sauvegarder",
-      showQuitGameButton: "Bouton Quitter le jeu",
-    };
-    return labels[schema.name] || schema.name;
+    const lang = (this._hass.language || 'en').split('-')[0].toLowerCase();
+    const i18n = TRANSLATIONS[lang] ?? TRANSLATIONS['en'];
+    const form_labels = i18n.form_label;
+    return form_labels[schema.name] || schema.name;
+  }
+
+  _computeHelper(schema) {
+    const lang = (this._hass.language || 'en').split('-')[0].toLowerCase();
+    const i18n = TRANSLATIONS[lang] ?? TRANSLATIONS['en'];
+    const labels = i18n.form_description;
+    return labels[schema.name];
   }
   
   
   // Le schéma définit les champs de l'interface visuelle
   _getSchema() {
+    const lang = (this._hass.language || 'en').split('-')[0].toLowerCase();
+    const i18n = TRANSLATIONS[lang] ?? TRANSLATIONS['en'];
     return [
       { name: "title", selector: { text: {} } },
       { name: "entity", required: true, selector: { 
@@ -362,12 +424,20 @@ class RecalboxCardEditor extends HTMLElement {
       },
       {
         name: "",
-		title: isFrench ? "Affichage des boutons" : "Buttons display",
+		title: i18n.form_sections.system_buttons,
         type: "expandable",
 		flatten: true,
         schema: [
             { name: "showTurnOffButton", selector: { boolean: {} } },
             { name: "showRebootButton", selector: { boolean: {} } },
+        ]
+      },
+      {
+        name: "",
+		title: i18n.form_sections.in_game_buttons,
+        type: "expandable",
+		flatten: true,
+        schema: [
             { name: "showScreenshotButton", selector: { boolean: {} } },
             { name: "showPauseGameButton", selector: { boolean: {} } },
             { name: "showLoadGameButton", selector: { boolean: {} } },
