@@ -12,6 +12,7 @@
 - Reorder settings buttons, because save/load were not in the same order that in the card
 - Change JSON sent from Recalbox to Home Assistant, from `imageUrl` to `imagePath`.
   Home Assistant will recompose the full URL on his own, because he knowns the host+port of this Recalbox.
+  Integration is still compatible with older versions, it reads `imageUrl` is existing in JSON, else it composes itself the URL with `imagePath`.
 - Make Recalbox script "permanent". It is way more optimized, and waits to be connected to network
   to send MQTT messages.
 

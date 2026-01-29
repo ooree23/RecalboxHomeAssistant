@@ -309,7 +309,7 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
                     self.genre = data.get("genre", "-")
                     self.genreId = data.get("genreId", "-")
                     self.rom = data.get("rom", "-")
-                    self.imageUrl = self.generateImageUrlFromPath(data.get("imagePath", "-"))
+                    self.imageUrl = data.get("imageUrl", self.generateImageUrlFromPath(data.get("imagePath", "-")))
 
 
                     _LOGGER.debug('Updating device version/hardware...')
