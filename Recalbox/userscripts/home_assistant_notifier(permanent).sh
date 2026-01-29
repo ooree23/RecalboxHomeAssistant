@@ -19,6 +19,7 @@ exec 1>> "$LOG_FILE" # Optionnel : redirige aussi la sortie standard (stdout)
 
 # MQTT localpour écouter les événements Recalbox
 MQTT_LOCAL_HOST="127.0.0.1"
+MQTT_LOCAL_PORT=1883
 TOPIC_LOCAL="/Recalbox/EmulationStation/Event"
 
 # Variables d'état
@@ -99,7 +100,7 @@ while true; do
   # mosquitto_pub -h 127.0.0.1 -t "/Recalbox/EmulationStation/Event" -m "start"
   # pour déclencher un événement MQTT
   echo "En attente d'un nouvel événement..." >&2
-  EVENT=$(mosquitto_sub -h "$MQTT_LOCAL_HOST" -p 1883 -q 0 -t "$TOPIC_LOCAL" -C 1)
+  EVENT=$(mosquitto_sub -h "$MQTT_LOCAL_HOST" -p $MQTT_LOCAL_PORT -q 0 -t "$TOPIC_LOCAL" -C 1)
   echo "Evénement reçu : $EVENT" >&2
 
   # Vérifier/Récupérer l'IP si on ne l'a pas encore
