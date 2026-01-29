@@ -326,6 +326,7 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
                         )
 
                 except json.JSONDecodeError:
+                    _LOGGER.error('Cannot parse JSON')
                     pass
 
             # Notifier HA du changement
