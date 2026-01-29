@@ -6,7 +6,6 @@
 
 # Configuration
 HOME_ASSISTANT_DOMAIN="homeassistant.local"
-RECALBOX_DOMAIN="recalbox.local"
 
 # Récupérer l'IP via mDNS
 HA_IP=$(avahi-resolve -n $HOME_ASSISTANT_DOMAIN -4 | cut -f2)
@@ -109,11 +108,11 @@ HARDWARE_MODEL=$(tr -d '\0' < /proc/device-tree/model 2>/dev/null || echo "Hardw
 
 # Fonction pour générer le JSON de jeu
 gen_game_json() {
-  local imageUrl="null"
+  local imagePath="null"
   if [ -n "$ROM" ] && [ "$ROM" != "null" ]; then
     local ROM_PATH_ENCODED="${ROM//\//%2F}"
     ROM_PATH_ENCODED="${ROM_PATH_ENCODED// /%20}"
-    imageUrl="\"http://$RECALBOX_DOMAIN:81/api/systems/$SYSTEM_ID/roms/metadata/image/$ROM_PATH_ENCODED\""
+    imagePath="\"api/systems/$SYSTEM_ID/roms/metadata/image/$ROM_PATH_ENCODED\""
   fi
     
   cat <<EOF
@@ -123,7 +122,7 @@ gen_game_json() {
   "rom": $(clean_json_val "$ROM"),
   "genre": $(clean_json_val "$GAME_GENRE"),
   "genreId": $(clean_json_val "$GAME_GENRE_ID"),
-  "imageUrl": $imageUrl,
+  "imagePath": $imagePath,
   "recalboxVersion": $(clean_json_val "$RECALBOX_VERSION"),
   "hardware": $(clean_json_val "$HARDWARE_MODEL")
 }

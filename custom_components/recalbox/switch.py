@@ -256,6 +256,17 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
     #       Ecoute MQTT      #
     ##########################
 
+
+
+    def generateImageUrlFromPath(self, path:str) -> str:
+        if path and path != "-":
+            imageUrl = f"http://{self._api.host}:{self._api.api_port_gamesmanager}/{path}"
+            _LOGGER.debug(f"Generate image URL to {imageUrl}")
+            return imageUrl
+        else:
+            return path
+
+
     # Callback, une fois ajouté à HASS
     # on souscrit aux files MQTT
     # pour mettre à jour la Recalbox selon
@@ -291,15 +302,17 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
                         "recalboxVersion": v_sw
                     })
 
+                    _LOGGER.debug('Updating game attributes...')
+
                     self.game = data.get("game", "-")
                     self.console = data.get("console", "-")
                     self.genre = data.get("genre", "-")
                     self.genreId = data.get("genreId", "-")
                     self.rom = data.get("rom", "-")
-                    self.imageUrl = data.get("imageUrl", "-")
+                    self.imageUrl = data.get("imageUrl", self.generateImageUrlFromPath(data.get("imagePath", "-")))
 
 
-                    _LOGGER.debug('Updating device version/hardware')
+                    _LOGGER.debug('Updating device version/hardware...')
                     # On signale à HA que les infos du device ont pu changer
                     device_registry = dr.async_get(self.hass)
                     device = device_registry.async_get_device(
