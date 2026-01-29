@@ -14,8 +14,7 @@ STATE_FILE="/tmp/es_state.inf"
 
 # logs
 LOG_FILE="/recalbox/share/saves/home_assistant_notifier.log"
-exec 2>> "$LOG_FILE" # Redirige les erreurs (stderr) vers le fichier
-exec 1>> "$LOG_FILE" # Optionnel : redirige aussi la sortie standard (stdout)
+exec > "$LOG_FILE" 2>&1 # Redirige les sorties vers le fichier
 
 # MQTT localpour écouter les événements Recalbox
 MQTT_LOCAL_HOST="127.0.0.1"
@@ -83,6 +82,28 @@ send_mqtt() {
 
 
 
+#------ Contournement du MQTT -------
+wait_for_file_updated() {
+  local file="$1"
+  local last_mod
+  last_mod=$(stat -t "$file" 2>/dev/null)
+
+  while true; do
+    local current_mod
+    current_mod=$(stat -t "$file" 2>/dev/null)
+
+    # Si la date a changé, on sort de la fonction
+    if [ "$current_mod" != "$last_mod" ]; then
+      echo "STATEFILE has been updated ! Simulating an event in 0.2 sec." >&2
+      # Petit délai pour laisser Recalbox finir d'écrire le fichier
+      sleep 0.2
+      return 0
+    fi
+
+    # On attend 1 seconde avant la prochaine vérification pour économiser le CPU
+    sleep 1
+  done
+}
 
 
 
@@ -100,7 +121,9 @@ while true; do
   # mosquitto_pub -h 127.0.0.1 -t "/Recalbox/EmulationStation/Event" -m "start"
   # pour déclencher un événement MQTT
   echo "En attente d'un nouvel événement..." >&2
-  EVENT=$(mosquitto_sub -h "$MQTT_LOCAL_HOST" -p $MQTT_LOCAL_PORT -q 0 -t "$TOPIC_LOCAL" -C 1)
+  # EVENT=$(mosquitto_sub -h "$MQTT_LOCAL_HOST" -p $MQTT_LOCAL_PORT -q 0 -t "$TOPIC_LOCAL" -C 1)
+  # Le MQTT ne fonctionne pas, on attend donc un changement du fichier $STATE_FILE
+  wait_for_file_updated "$STATE_FILE"
   echo "Evénement reçu : $EVENT" >&2
 
   # Vérifier/Récupérer l'IP si on ne l'a pas encore

@@ -105,8 +105,10 @@ It uses the same services just listed.
 
 1. **Recalbox**
    
-   - Copy the file `Recalbox/userscripts/home_assistant_notifier.sh` in the `userscripts` Recalbox folder.
-     This script will react to Recalbox events.
+   - Copy the script of your choice in the `userscripts` Recalbox folder. **Only one is required** !
+     - `Recalbox/userscripts/home_assistant_notifier.sh` : sript called at every event
+     - `Recalbox/userscripts/home_assistant_notifier(permanent).sh` : script called only once, and waiting for events itself
+     Both script will react to Recalbox events.
 
 
 2. **Home Assistant**
