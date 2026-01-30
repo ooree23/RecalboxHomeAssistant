@@ -115,7 +115,6 @@ wait_for_file_updated() {
 # voir les logs de cet outil:     tail -f "/recalbox/share/saves/home_assistant_notifier.log"
 
 echo "Démarrage du démon de notification Home Assistant par MQTT..." >&2
-ALLOWED_EVENTS="start|systembrowsing|endgame|runkodi|stop|shutdown|reboot|wakeup|rungame"
 
 while true; do
 
@@ -126,7 +125,7 @@ while true; do
   EVENT=$(mosquitto_sub -h "$MQTT_LOCAL_HOST" -p $MQTT_LOCAL_PORT -q 0 -t "$TOPIC_LOCAL" -C 1)
 
   case "$EVENT" in
-    $ALLOWED_EVENTS)
+    start|systembrowsing|endgame|runkodi|stop|shutdown|reboot|wakeup|rungame)
       echo "Evénement reçu : $EVENT" >&2
       ;;
     *)
@@ -134,8 +133,6 @@ while true; do
       continue
       ;;
   esac
-
-  # Arrivés ici, on a du réseau et on a récupéré l'IP de Home Assistant
 
   # Extraction des données
   ACTION=$(get_val "Action")
@@ -201,6 +198,8 @@ EOF
     echo "Message non envoyé. En attente du réseau/mDNS..." >&2
     continue
   fi
+
+  # Arrivés ici, on a du réseau et on a récupéré l'IP de Home Assistant
 
   # 5. Envoi
   send_mqtt "status" "$STATUS" "false"
