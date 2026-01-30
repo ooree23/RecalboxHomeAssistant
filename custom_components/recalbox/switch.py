@@ -282,6 +282,11 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
         if self.coordinator.data is True:
             _LOGGER.debug("Premier ping réussi au démarrage : on met la recalbox sur ON")
             self._attr_is_on = True
+            self.reset_game_attributes()
+            self.async_write_ha_state()
+            _LOGGER.info("Recalbox marquée comme en ligne, sans info de jeux")
+        else:
+            _LOGGER.debug("Premier ping échoué au démarrage : on laisse la recalbox sur OFF")
 
         async def message_received(msg):
             """Logique lors de la réception d'un message MQTT."""
