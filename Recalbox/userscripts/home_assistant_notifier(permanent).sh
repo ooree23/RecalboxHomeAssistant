@@ -13,7 +13,7 @@ TOPIC="recalbox/notifications"
 STATE_FILE="/tmp/es_state.inf"
 
 # logs
-LOG_FILE="/recalbox/share/saves/home_assistant_notifier.log"
+LOG_FILE="/recalbox/share/saves/home_assistant_notifier_$(date '+%Y-%m-%d %H:%M:%S').log"
 exec > "$LOG_FILE" 2>&1 # Redirige les sorties vers le fichier
 
 # MQTT localpour écouter les événements Recalbox
@@ -35,7 +35,7 @@ HA_IP=""
 
 # Ecriture dans les logs
 log() {
-  echo "[ $(date '+%Y-%m-%d %H:%M:%S.%3N') ] $1" >&2
+  echo "[ $(date '+%Y-%m-%d %H:%M:%S') ] $1" >&2
 }
 
 # Fonction pour extraire une valeur par sa clé
@@ -114,6 +114,11 @@ while true; do
       ;;
   esac
 
+  if [ ! -f "$STATE_FILE" ]; then
+    log "Erreur : $STATE_FILE introuvable."
+    continue
+  fi
+
   # Extraction des données
   ACTION=$(get_val "Action")
   SYSTEM_ID=$(get_val "SystemId")
@@ -135,7 +140,7 @@ while true; do
       ;;
     runkodi)
       clear_game
-      SYSTEM_NAME="Kodi"; GAME_NAME="Lecteur multimédia"
+      SYSTEM_NAME="Kodi";
       ;;
     stop|shutdown|reboot)
       STATUS="OFF"; clear_game; SYSTEM_NAME="null"

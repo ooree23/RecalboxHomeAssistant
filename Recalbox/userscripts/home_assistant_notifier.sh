@@ -15,6 +15,7 @@ TOPIC="recalbox/notifications"
 # Chemin du fichier d'état Recalbox
 STATE_FILE="/tmp/es_state.inf"
 
+
 # Vérification de l'existence du fichier
 if [ ! -f "$STATE_FILE" ]; then
   echo "Erreur : $STATE_FILE introuvable."
@@ -41,6 +42,15 @@ GAME_GENRE_ID=$(get_val "GenreId")
 GAME_NAME="${GAME_NAME/#[0-9][0-9][0-9] /}"
 
 
+# logs
+LOG_FILE="/recalbox/share/saves/home_assistant_notifier_$(date '+%Y-%m-%d_%H%M%S')_$ACTION.log"
+exec > "$LOG_FILE" 2>&1 # Redirige les sorties vers le fichier
+
+# Ecriture dans les logs
+log() {
+  echo "[ $(date '+%Y-%m-%d %H:%M:%S') ] $1" >&2
+}
+
 # Nettoyage des variables pour le JSON
 clean_json_val() {
   if [ -z "$1" ] || [ "$1" == "null" ]; then
@@ -59,8 +69,10 @@ send_mqtt() {
   
   if [ "$3" == "true" ]; then
     mosquitto_pub -h "$HA_IP" -u "$MQTT_USER" -P "$MQTT_PASS" -t "$TOPIC/$sub_topic" -m "$message" -r
+    log "Message MQTT(r) envoyé à $HA_IP, sur $TOPIC/$sub_topic : $message"
   else
     mosquitto_pub -h "$HA_IP" -u "$MQTT_USER" -P "$MQTT_PASS" -t "$TOPIC/$sub_topic" -m "$message"
+    log "Message MQTT envoyé à $HA_IP, sur $TOPIC/$sub_topic : $message"
   fi
 }
 
@@ -81,7 +93,6 @@ case "$ACTION" in
   runkodi)
     clear_game
     SYSTEM_NAME="Kodi"
-    GAME_NAME="Lecteur multimédia"
     ;;
   wakeup|rungame)
     ;;
@@ -91,16 +102,17 @@ case "$ACTION" in
     CONSOLE_JSON="null"
     ;;
   *)
-    echo "! Ignoring command \"$ACTION\" !"
+    echo "Ignoring command \"$ACTION\" !"
     exit 1
     ;;
 esac
 
 
-
+log "Generating data for received command $ACTION"
 
 # Récupérer l'IP via mDNS
 HA_IP=$(avahi-resolve -n $HOME_ASSISTANT_DOMAIN -4 | cut -f2)
+log "IP Home Assistant : $HA_IP"
 
 # Extraction de la version et du hardware
 RECALBOX_VERSION=$(cat /recalbox/recalbox.version 2>/dev/null || echo "Inconnue")
