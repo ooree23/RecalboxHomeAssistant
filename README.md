@@ -87,6 +87,7 @@ Home Assistant can then update its "Recalbox" entity with the current game.
 > - `imageUrl`
 > - `recalboxVersion` : Version of the Recalbox OS
 > - `hardware` : Device running the Recalbox
+> - `scriptVersion` : Version of the integration script in the Recalbox
 
 ### Home Assistant to Recalbox
 
