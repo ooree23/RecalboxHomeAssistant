@@ -53,8 +53,9 @@ prepare_logs_file() {
     # Démarrage : on efface tous les anciens logs
     find "$LOGS_FOLDER/" -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
   elif [ ! -f "$HOME_ASSISTANT_IP_CACHE_FILE" ]; then
+    # On a déjà démarré.
     # Si on n'a pas encore récupéré l'adresse IP de HomeAssistant <-> dans les premiers lancements,
-    # Alors on va nettoyer les anciens logs.
+    # Alors on va nettoyer les anciens logs (sauf le dossier du jour):
 
     # On supprime les dossiers de logs des autres jours, pour pas tout garder pour rien :
     # on cherche les dossiers (-type d) dans le répertoire parent,
