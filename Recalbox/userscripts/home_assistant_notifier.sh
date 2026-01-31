@@ -49,7 +49,6 @@ prepare_logs_file() {
   # logs : 1 dossier par jour
   LOG_DIR="$LOGS_FOLDER/$(date '+%Y-%m-%d')"
   # On crée le dossier de logs du jour, s'il n'existe pas encore
-  mkdir -p "$LOG_DIR"
   if [[ $ACTION == "start" ]]; then
     # Démarrage : on efface tous les anciens logs
     find "$LOGS_FOLDER/" -mindepth 1 -maxdepth 1 -type d -exec rm -rf {} +
@@ -63,6 +62,7 @@ prepare_logs_file() {
     # puis on supprime.
     find "$LOGS_FOLDER/" -mindepth 1 -maxdepth 1 -type d ! -path "$LOG_DIR" -exec rm -rf {} +
   fi
+  mkdir -p "$LOG_DIR"
   # Et enfin on crée le fichier le logs de cette instance du script
   LOG_FILE="$LOG_DIR/home_assistant_notifier_$(date '+%Y-%m-%d_%H%M%S')_$ACTION.log"
   exec > "$LOG_FILE" 2>&1 # Redirige les sorties vers le fichier
