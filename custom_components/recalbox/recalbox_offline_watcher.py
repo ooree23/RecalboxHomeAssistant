@@ -28,6 +28,7 @@ async def prepare_ping_coordinator(hass, api:RecalboxAPI) -> DataUpdateCoordinat
     async def async_update_data():
         """Vérifie si la Recalbox répond aux ping."""
         success = False
+        resolved_ip = None
         try:
             async with async_timeout.timeout(5):
                 success = await api.ping()
@@ -55,7 +56,7 @@ async def prepare_ping_coordinator(hass, api:RecalboxAPI) -> DataUpdateCoordinat
         _LOGGER.debug(f"Historique des pings sur la Recalbox {api.host} : {list(history)}")
         if any(history) :
             # The recalbox has Pings OK in the history
-            _LOGGER.debug(f"The Recalbox {api.host} answers to ping, consider as probably online on IP {resolved_ip}.")
+            _LOGGER.debug(f"The Recalbox {api.host} answers to ping, consider as probably online on IP {resolved_ip or 'unresolved'}.")
         elif hasAnySuccessBefore :
             # La recalbox n'a plus de Ping OK mais elle en avait juste avant
             _LOGGER.info(f"The Recalbox {api.host} doesnt answer to Pings anymore... Considering it as offline from now.")

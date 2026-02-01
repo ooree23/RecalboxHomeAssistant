@@ -265,7 +265,7 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
         try:
             ipaddress.ip_address(self._api.host)
             return self._api.host # on était déjà sur une adresse IP
-        except Exception as err:
+        except ValueError as err:
             # Ce n'est pas une IP (probablement un nom d'hôte)
             # Si on ne connait pas encore l'IP, on essaye de la récupérer
             if not self.coordinator.data.get("mdns_ip_address"):
