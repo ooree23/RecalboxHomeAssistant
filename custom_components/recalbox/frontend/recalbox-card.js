@@ -190,10 +190,10 @@ class RecalboxCard extends HTMLElement {
     const isOn = state.state === "on";
     const game = state.attributes.game || "-";
     const consoleName = state.attributes.console || "-";
-    const isAGameRunning = game && game!="-" && game!="None" && consoleName!="Kodi";
     const genre = state.attributes.genre || "-";
     const romPath = state.attributes.rom || "-";
     const imageUrl = state.attributes.imageUrl || "";
+    const isAGameRunning = game && game!="-" && game!="None" && consoleName!="Kodi";
     const needsRestart = state.attributes.needs_restart || false;
 
     // 0. titre

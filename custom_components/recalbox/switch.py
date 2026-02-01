@@ -47,12 +47,12 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
         self._attr_extra_state_attributes = {}
         # Attribut volatile (non persisté dans l'objet d'état standard)
         self.recalboxIpAddress = None
-        self.game = "-"
-        self.console = "-"
-        self.rom = "-"
-        self.genre = "-"
-        self.genreId = "-"
-        self.imageUrl = "-"
+        self.game = None
+        self.console = None
+        self.rom = None
+        self.genre = None
+        self.genreId = None
+        self.imageUrl = None
 
     #@property
     #def icon(self):
@@ -73,8 +73,8 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
             "manufacturer": "Recalbox",
             "model": f"Recalbox OS, at {self._api.host}",
             "configuration_url": f"http://{self._api.host}",
-            "sw_version": self._attr_extra_state_attributes.get("recalboxVersion", "-"),
-            "hw_version": self._attr_extra_state_attributes.get("hardware", "-")
+            "sw_version": self._attr_extra_state_attributes.get("recalboxVersion"),
+            "hw_version": self._attr_extra_state_attributes.get("hardware")
         }
 
     @property
@@ -246,12 +246,12 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
 
 
     def reset_game_attributes(self):
-        self.game = "-"
-        self.console = "-"
-        self.genre = "-"
-        self.genreId = "-"
-        self.rom = "-"
-        self.imageUrl = "-"
+        self.game = None
+        self.console = None
+        self.genre = None
+        self.genreId = None
+        self.rom = None
+        self.imageUrl = None
         _LOGGER.debug("Recalbox game attributes cleaned")
 
     ##########################
@@ -322,12 +322,12 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
 
                     _LOGGER.debug('Updating game attributes...')
 
-                    self.game = data.get("game", "-")
-                    self.console = data.get("console", "-")
-                    self.genre = data.get("genre", "-")
-                    self.genreId = data.get("genreId", "-")
-                    self.rom = data.get("rom", "-")
-                    self.imageUrl = data.get("imageUrl", self.generateImageUrlFromPath(data.get("imagePath", "-")))
+                    self.game = data.get("game")
+                    self.console = data.get("console")
+                    self.genre = data.get("genre")
+                    self.genreId = data.get("genreId")
+                    self.rom = data.get("rom")
+                    self.imageUrl = data.get("imageUrl", self.generateImageUrlFromPath(data.get("imagePath")))
 
 
                     _LOGGER.debug('Updating device version/hardware...')

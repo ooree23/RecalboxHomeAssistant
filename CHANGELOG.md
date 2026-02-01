@@ -6,6 +6,7 @@
 ## v1.3.2 - ...
 
 - Clean `recalboxIpAddress` and `scriptVersion` switch attributes
+- In the HA model, return to 'None' fields values, instead of "-" that was not consistent
 
 
 ## v1.3.1 - 01/02/2026
