@@ -8,7 +8,7 @@ const TRANSLATIONS = {
     "genre": "Genre",
     "romPath": "Rom",
     "rebootRequired": "De nouvelles phrases Assist ont été détectées et installées. Redémarrez Home Assistant une nouvelle fois pour les activer et avoir accès aux nouvelles commandes vocales/textuelles.",
-    "recalboxScriptUpgradeRequired": "Vous devez installer la dernière version du script sur votre Recalbox. La version actuelle est trop ancienne.",
+    "recalboxScriptUpgradeRequired": "Vous devez installer la dernière version du script sur votre Recalbox. La version actuellement installée est trop ancienne.",
     "buttons": {
       "shutdown": "Éteindre",
       "reboot": "Redémarrer",
@@ -63,7 +63,7 @@ const TRANSLATIONS = {
     "genre": "Genre",
     "romPath": "Rom",
     "rebootRequired": "New Assist sentences have been installed. You will have to restart Home Assistant again to have access to the new intents on text/voice commands.",
-    "recalboxScriptUpgradeRequired": "Please update the script in your Recalbox. The version installed is too old.",
+    "recalboxScriptUpgradeRequired": "Please update the script in your Recalbox. The version installed on your Recalbox is too old.",
     "buttons": {
       "shutdown": "Power off",
       "reboot": "Reboot",
