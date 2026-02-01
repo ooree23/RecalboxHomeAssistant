@@ -118,8 +118,22 @@ const TRANSLATIONS = {
 class RecalboxCard extends HTMLElement {
 
   set hass(hass) {
+    if (!hass || !hass.connected) {
+      this.innerHTML = `<ha-card><div style="padding:16px; color:orange;">Home Assistant is not ready...</div></ha-card>`;
+      return;
+    }
+    if (!this.config) {
+      this.innerHTML = `<ha-card><div style="padding:16px; color:orange;">Configuration not ready yet...</div></ha-card>`;
+      return;
+    }
+
     const entityId = this.config.entity;
     const state = hass.states[entityId];
+
+    if (!state) {
+      this.innerHTML = `<ha-card><div style="padding:16px; color:red;">Entité non trouvée, ou état non accessible : ${entityId}</div></ha-card>`;
+      return;
+    }
 
     const lang = (this.config.lang || hass.language || 'en').split('-')[0].toLowerCase();
     const i18n = TRANSLATIONS[lang] || TRANSLATIONS['en'];
@@ -135,10 +149,6 @@ class RecalboxCard extends HTMLElement {
     const showSaveGameButton = this.config.showSaveGameButton ?? true;
     const showQuitGameButton = this.config.showQuitGameButton ?? true;
 
-    if (!state) {
-      this.innerHTML = `<ha-card><div style="padding:16px; color:red;">Entité non trouvée : ${entityId}</div></ha-card>`;
-      return;
-    }
 
     if (!this.content) {
       this.innerHTML = `
@@ -452,10 +462,8 @@ class RecalboxCardEditor extends HTMLElement {
 }
 
 
-customElements.define("recalbox-card-editor", RecalboxCardEditor);
-customElements.define('recalbox-card', RecalboxCard);
 
-const isFrench = navigator.language.startsWith('fr');
+const isFrench = navigator.language.toLowerCase().startsWith('fr');
 const cardDescription = isFrench
   ? "Carte complète avec gestion des jeux, actions et informations système."
   : "Complete card with game management, actions, and system information.";
@@ -466,3 +474,11 @@ window.customCards.push({
   name: "Recalbox Card",
   description: cardDescription
 });
+
+
+if (!customElements.get("recalbox-card-editor")) {
+  customElements.define("recalbox-card-editor", RecalboxCardEditor);
+}
+if (!customElements.get("recalbox-card")) {
+  customElements.define("recalbox-card", RecalboxCard);
+}
