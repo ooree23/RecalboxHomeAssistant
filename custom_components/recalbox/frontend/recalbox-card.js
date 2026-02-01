@@ -162,15 +162,25 @@ class RecalboxCard extends HTMLElement {
     if (state && state.attributes.recalboxVersion) {
         if (!currentScriptVersion) {
             // we already had a recalbox version but not the script version
+            console.log("Recalbox Card: Aucun scriptVersion trouvé dans les attributs.");
             needsRecalboxScriptUpgrade = true;
         } else {
             const versionParts = currentScriptVersion.split(":");
             const cleanVersion = versionParts.length > 1 ? versionParts[1].trim() : versionParts[0].trim();
-            if (cleanVersion.localeCompare(RECALBOX_SCRIPT_MIN_VERSION, undefined, { numeric: true, sensitivity: 'base' }) < 0) {
-                // the script version is < RECALBOX_SCRIPT_MIN_VERSION
-                needsRecalboxScriptUpgrade = true;
-            }
+
+            const comparison = cleanVersion.localeCompare(RECALBOX_SCRIPT_MIN_VERSION, undefined, { numeric: true, sensitivity: 'base' });
+
+            // logs
+            console.log("--- Recalbox Script Check ---");
+            console.log("Brut provenant de l'entité :", currentScriptVersion);
+            console.log("Version extraite (clean) :", cleanVersion);
+            console.log("Version minimale requise :", RECALBOX_SCRIPT_MIN_VERSION);
+            console.log("Résultat localeCompare :", comparison, "(Si < 0, mise à jour requise)");
+
+            needsRecalboxScriptUpgrade = (comparison < 0);
         }
+    } else {
+
     }
 
 
