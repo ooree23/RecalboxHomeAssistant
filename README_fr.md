@@ -1,33 +1,33 @@
-# Recalbox Home Assistant integration
+# Intégration Recalbox Home Assistant
 
-<small>By Aurélien Tomassini, 2026</small>
+<small>Par Aurélien Tomassini, 2026</small>
 
-🇺🇸 English version  
-[🇫🇷 Lire le README en Français](README_fr.md)
+🇫🇷 Version Française  
+[🇺🇸 Read README in English](README.md)
 
 <img src="logo.png" height="196px">
 
-This repository allows you to integrate Recalbox in your Home Assistant :
-- In your dashboard :
-  - Get status
-  - Display current game
-  - Stop current game
-  - Take a screenshot
-  - Pause/resume game
-  - Save/Load game state
-  - Turn off
-  - Reboot
+Ce dépôt vous permet d'intégrer Recalbox dans votre Home Assistant :
+- Dans votre tableau de bord :
+  - Voir le status
+  - Afficher le jeu en cours
+  - Arrêter le jeu
+  - Prendre une capture d'écran
+  - Pause/reprendre l'émulateur
+  - Enregistrer/charger la partie
+  - Eteindre
+  - Redémarrer
   - etc
-- Trigger any automation you want.  
-  For example, change light color according to the game launched, send notifications, etc.
-- Voice/text commands with assistant (EN/FR) :
-  - Launch a game by its title (full or partial title search)
-  - Ask what is the current game
-  - Stop current game
-  - Take a screenshot
-  - Pause/resume game
-  - Save/Load game state
-  - Turn off Recalbox
+- Déclencher vos automatisations.  
+  Par exemple, changer la couleur des lumières selon le jeu lancé, envoyer des notifications, etc.
+- Commandes vocales/textuelles Assist (EN/FR) :
+  - Lancer un jeu par son titre (complet ou partiel)
+  - Demander quel est le jeu en cours
+  - Arrêter le jeu en cours
+  - Demander une capture d'écran
+  - Pause/reprendre le jeu
+  - Enregistrer/charger la partie
+  - Eteindre la Recalbox
   - etc
 
 ![](docs/RecalboxHomeAssistantIntegration.png)
@@ -60,30 +60,30 @@ This repository allows you to integrate Recalbox in your Home Assistant :
 
 <!-- tocstop -->
 
-## Requirements
+## Pré-requis
 
-- You should have a `Recalbox` available.  
-  Tested only with Recalbox <mark>9.2.3</mark>, Raspberry Pi 3 B+.  
-  Should be accessible by its hostname, like `recalbox.local` for example.  
-  > Its API ports (80 and 81) and UDP ports (1337 and 55355) should be accessible in the local network (enabled by default).
+- Vous devez disposer d'au moins une `Recalbox` connectée au réseau.  
+  Testé pour le moment seulement sur Recalbox <mark>9.2.3</mark>, sur Raspberry Pi 3 B+.  
+  Vous devez disposer du "hostname" pour accéder à la Recalbox sur le réseau, via `recalbox.local` par example.  
+  > Ses ports pour l'API (80 et 81) et ports UDP (1337 et 55355) doivent être accessibles et ouverts sur le réseau local (ce qui est le cas par default sur le Recalbox).
 
 
-- You should have a `Home Assistant`.  
-  Tested on Home Assistant <mark>2026.1</mark>, Raspberry Pi 3 B+.  
-  By default, It should be accessible in the same network, at `homeassistant.local`
+- Vous devez disposer d'un `Home Assistant`.  
+  Testé sur Home Assistant <mark>2026.1</mark>, <mark>2026.2</mark>, sur Raspberry Pi 3 B+.  
+  Doit être sur le même réseau, accessible par défaut via `homeassistant.local`
 
 
 ## Architecture
 
 ![](docs/RecalboxHomeAssistantArchitecture.png)
 
-### Recalbox to Home Assistant
+### Recalbox vers Home Assistant
 
-On the Recalbox, a script listens on local events, based on [Scripts sur événements d'EmulationStation | Recalbox Wiki](https://wiki.recalbox.com/fr/advanced-usage/scripts-on-emulationstation-events) .
-The scripts reads the needed data for game information, and sends a MQTT message to Home Assistant with JSON data.
-Home Assistant can then update its "Recalbox" entity with the current game.
+Sur la Recalbox, un script écoute les événements locaux, selon la documentation [Scripts sur événements d'EmulationStation | Recalbox Wiki](https://wiki.recalbox.com/fr/advanced-usage/scripts-on-emulationstation-events) .
+Le script lit les informations nécessaire sur le jeu et la Recalbox, et envoie un message MQTT à Home Assistant en JSON.
+Home Assistant va alors mettre à jour son entité "Recalbox" avec les informations reçues.
 
-> The attributes read by Home Assistant are, through this JSON :
+> Les attributs reçus par Home Assistant (dans le JSON) sont :
 > - `game`
 > - `console`
 > - `rom`
@@ -91,20 +91,20 @@ Home Assistant can then update its "Recalbox" entity with the current game.
 > - `genreId`
 > - `imageUrl`
 > - `recalboxIpAddress`
-> - `recalboxVersion` : Version of the Recalbox OS
-> - `hardware` : Device running the Recalbox
-> - `scriptVersion` : Version of the integration script in the Recalbox
+> - `recalboxVersion` : Version de l'OS Recalbox
+> - `hardware` : Appareil sur lequel tourne Recalbox
+> - `scriptVersion` : Version du script d'intégration sh qui tourne sur la Recalbox
 
-### Home Assistant to Recalbox
+### Home Assistant vers Recalbox
 
-On Home Assistant, orders are sent to Recalbox via API and UDP commands :
-- Stop, reboot, screenshot commands via API
-- Game list via API
-- Launch a game via UDP
+Depuis Home Assistant, les ordre sont envoyés à la Recalbox par API et commandes UDP :
+- Commandes d'extinction, redémarrage, ou capture d'écran par API
+- Liste des jeux d'une console par API
+- Lancer un jeu par commande UDP
 
-Assist integration for voice/text control has also been implemented in order to
-control, get information, or find a game to launch.  
-It uses the same services just listed.
+Les intégration des phrases Assist pour le texte/ la voix ont aussi été implémentés
+pour le contrôle, la demande d'informations, ou cherche le jeu à lancer. Les commandes
+lancées par Assist utilisent les mêmes commandes que listées ci-dessus.
 
 
 
@@ -112,55 +112,56 @@ It uses the same services just listed.
 
 1. **Recalbox**
    
-   - Copy the `sh` script in the `userscripts` Recalbox folder. **Only one is required** !
-     - `Recalbox/userscripts/home_assistant_notifier.sh` : script called at every event. Optimized since v1.3.1
-     - **(EXPERIMENTAL)** `Recalbox/userscripts/home_assistant_notifier(permanent).sh` : script called only once, and waiting for events itself
-     Both script will react to Recalbox events.
-     Still experimental in v1.3.1, use at your own risk.
+   - Copiez le script `sh` dans le dossier `userscripts` de la Recalbox. **Uniquement l'un des deux, pas les deux!**
+     - `Recalbox/userscripts/home_assistant_notifier.sh` : script appelé pour chaque événement. Optimisé depuis la version v1.3.1
+     - **(EXPERIMENTAL)** `Recalbox/userscripts/home_assistant_notifier(permanent).sh` : script permanent, lancé en background, qui boucles sur les événements reçus. Expérimental, pas encore au point !  
      
-     > If your Home Assistant is not accessible via `homeassistant.local`,
-     > change the "HOME_ASSISTANT_DOMAIN" variable on top of the script.
+     Les deux scripts réagissent aux mêmes événements.
+     
+     > Si votre Home Assistant est accessible par un autre hôte que `homeassistant.local`,
+     > changez la variable "HOME_ASSISTANT_DOMAIN" en haut du script.
 
 
 2. **Home Assistant**
  
-   - Install MQTT Broker  
+   - Installer le broker MQTT  
      
-     - Create a new Home Assistant User, named "recalbox" (or something else), allowed to connect only on the local network. This user will be used for MQTT Authentication. Replace the user/password `home_assistant_notifier.sh` line 13 and 14 (`MQTT_USER` & `MQTT_PASS`)
+     - Créez un utilisateur Home Assistant, appelé "recalbox" (ou autre), autorisé à se connecter seulement sur le réseau local.
+       Cet utilisateur sera utilisé pour l'authentification MQTT. Remplacez le login/password dans `home_assistant_notifier.sh`, lignes 13 et 14 (`MQTT_USER` & `MQTT_PASS`)
    
-     - Install MQTT Mosquitto broker in Home assistant (in addons).  
+     - Installez le broker MQTT Mosquitto dans Home assistant (via Addons).  
        [![Open your Home Assistant instance and open install MQTT.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=mqtt)  
-       Enable the Run on start, and watchdog.
+       Autoriser le lancement au démarrage, et activez le watchdog.
    
      - In services integration, add MQTT service which should be now available.
        Click on reconfigure, and use the credentials defined for authentication.
        Double check they are the same defined in `home_assistant_notifier.sh` lines 13+14.
      
-   - Install Recalbox Integration
+   - Installer Recalbox Integration
    
-     - If not installed yet, install HACS
+     - Si vous ne l'avez pas encore, installez HACS
      
-     - Install this repository via this button :  
+     - Installez cette intégration Recalbox via ce bouton :  
        [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ooree23&repository=RecalboxHomeAssistant&category=integration)  
-       Or manually, add `https://github.com/ooree23/RecalboxHomeAssistant` as repository, as Integration.
-       Press download, and then accept to restart.
-       It will automatically add Recalbox integration to your Home Assistant
-       (new "Recalbox" Integration will be available after restart in the Devices & Service menu).
+       Ou manuellement, ajoutez `https://github.com/ooree23/RecalboxHomeAssistant` comme dépôt, de type Integration.
+       Cliquez sur télécharger, et acceptez de redémarrer.
+       Cela ajoutera l'intégration Recalbox dans votre Home Assistant
+       (la nouvelle intégration "Recalbox" sera visible seulement après le redémarrage, dans le menu Appareils & Service).
       
-     - Add your new Recalbox with this button  
+     - Ajouter une nouvelle Recalbox avec ce simple bouton :  
        [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=recalbox)  
-       Or, manually, go to Devices & Services menu, "+ add integration", and search for "Recalbox".  
-       You will be asked for Host/IP of your Recalbox (the default host is "recalbox.local"), and ports can be changed if needed.
-       If you can, have your Recalbox ON, and then let the "Test connection" checkbox checked to test host and ports.  
+       Ou, manuellement, allez dans le menu Appareils & Services, "+ add integration", et recherchez "Recalbox".
+       Un formulaire vous demandera l'Hôst/IP de votre Recalbox (par défaut "recalbox.local"), et les ports par défaut peuvent être changés si besoin.
+       Si votre Recalbox est allumée, activez "Test connection" pour valider vos paramètres.  
        
-       > You can use as many Recalbox as you want in your Network.  
-       > Depending on the infrastructure, if you have dynamic IP address, please use Hostnames,
-       > not IP address, as it could change later.
-       
-      
+       > Vous pouvez avoir plusieurs Recalbox sur votre réseau, et dans cette intégration Home Assistant.  
+       > Selon votre infrastructure, vous aurez probablement des adresses IP dynamiques : veuillez donc utiliser les noms d'hôtes,
+       > différents, au lieu des adresses IP, puisque celles-ci peuvent changer dans le temps.
 
 
-## Usage 
+
+
+## Utilisation 
 
 
 > Most of in-game button/voice actions use UDP commands.  
@@ -168,7 +169,7 @@ It uses the same services just listed.
 > This versions uses port 55355 for retroarch UDP commands by default.
 
 
-### Dashboard card
+### Carte du Dashboard
 
 You can add a Recalbox card to your Home Assistant dashboard, in order to display the Recalbox status, game info, picture, etc.  
 It will be refreshed in real time.
@@ -184,7 +185,7 @@ Example : all buttons shown, update alert shown, genre shown, but Rom path hidde
 ![](docs/example.png)
 
 
-### Automations
+### Automatisations
 
 You can also create automations, triggered when a game is launched for example.  
 If interested in this example, copy [recalbox_automations.yaml](Home%20Assistant/automations/recalbox_automations.yaml) into `/config/automations/recalbox_automations.yaml`
@@ -196,7 +197,7 @@ automation yaml: !include_dir_merge_list automations/
 in `configuration.yaml`, to allow Home Assistant to read yaml files in `automations` subfolder.
 
 
-### Assist (text/voice)
+### Assist (texte/voix)
 
 > Since v0.2.0, a script auto installs the sentences and sentences updates.
 > Check the dashboard custom card to see if the HA needs a restarts to update the sentences.
@@ -216,7 +217,7 @@ Examples :
 ![](docs/currentGameAssist.png)
 
 
-#### Launch a game
+#### Lancer un jeu
 
 Examples :
   - "Launch Sonic 3 on megadrive"
@@ -235,7 +236,7 @@ Examples :
 > Example : Searching for "Pokemon Jaune", can find the rom "Pokemon - Version Jaune - Edition Speciale Pikachu".
 
 
-#### Stop the current game
+#### Arrêter le jeu en cours
 
 
 Examples :
@@ -245,7 +246,7 @@ Examples :
 
 
 
-#### Pause/Resume the current game
+#### Pause/Reprendre le jeu
 
 
 Examples :
@@ -254,7 +255,7 @@ Examples :
   - "Mets le jeu en pause"
 
 
-#### Take a screenshot
+#### Faire une capture d'écran
 
 You can make a game screenshot, simply pushing the screenshot button on your dashboard.  
 You can also make a screenshot via Assist. 
@@ -271,7 +272,7 @@ Examples :
 >   Note about API : on Recalbox 9.2.3 or Raspberry Pi 3, the screenshots via API are broken (also in the Recalbox Web Manager). That's why I chose UDP first.
 
 
-#### Save current game state
+#### Enregistrer la partie
 
 Examples :
 - "Save the current game"
@@ -281,7 +282,7 @@ Examples :
 - "Sauvegarde ma partie"
 
 
-#### Load last game state
+#### Charger la partie
 
 Examples :
 - "Load my last game state"
@@ -302,14 +303,14 @@ Examples :
 
 
 
-## Releases notes
+## Notes de versions
 
-See [change logs file](CHANGELOG.md)
+Consultez [le fichier des notes de versions](CHANGELOG.md)
 
 
-## Troubleshot
+## Aides
 
-### `CRLF` / `LF` run script issue 
+### Problème de lancement du script Recalbox, à cause du `CRLF` / `LF` 
 If your Recalbox doesn't seem to reach Home Assistant, while you have your script in `userscripts`,
 please make sure the `.sh` file is using "LF" line separator :
 - You can run via SSH `sh <path-to-the-script>` :  
