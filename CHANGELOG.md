@@ -3,11 +3,13 @@
 > By Aurélien Tomassini, 2026.
 
 
-## v1.4.1 - ...
+## v1.4.1 - 03/02/2026
 
 
 - Ensure git pulls the sources with `LF` instead of `CRLF` on windows (+ add troubleshot section in readme)
 - Add ℹ️ button in the Recalbox Card, going to the quick intro page https://ooree23.github.io/RecalboxHomeAssistant/
+- If only one instance of Recalbox exists, then it considers every message is for himself, no matter the IP address
+  where the message comes from.
 
 
 ## v1.4.0 - 01/02/2026 - (Breaking changes) Support multiple Recalbox !
