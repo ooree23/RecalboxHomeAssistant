@@ -327,9 +327,9 @@ class RecalboxEntityMQTT(CoordinatorEntity, SwitchEntity):
 
                     # Vérification si le message est destiné à cette recalbox ou non
                     if self.isTheOnlyRecalboxExisting() :
-                        _LOGGER.debug(f"This is the only Recalbox : reads all incoming messages !")
+                        _LOGGER.debug(f"This is the only Recalbox in Home Assistant : reads all incoming messages !")
                     elif (await self.getRecalboxCurrentIPAddress()) == data.get("recalboxIpAddress") :
-                        _LOGGER.debug(f"This game message was sent from {self._api.host} !")
+                        _LOGGER.debug(f"This game message was sent from {self._api.host} (current Recalbox IP) !")
                     else :
                         _LOGGER.debug(f"Ignore : this game message was sent from {data.get("recalboxIpAddress")}, but {self._api.host} has IP {self.coordinator.data.get("mdns_ip_address")} !")
                         return

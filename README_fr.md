@@ -43,10 +43,10 @@ Ce dépôt vous permet d'intégrer Recalbox dans votre Home Assistant :
   * [Home Assistant vers Recalbox](#home-assistant-vers-recalbox)
 - [Installation](#installation)
 - [Utilisation](#utilisation)
-  * [Carte du Dashboard](#carte-du-dashboard)
+  * [Carte du tableau de bord](#carte-du-tableau-de-bord)
   * [Automatisations](#automatisations)
   * [Assist (texte/voix)](#assist-textevoix)
-    + [Get current game](#get-current-game)
+    + [Savoir quel est le jeu en cours](#savoir-quel-est-le-jeu-en-cours)
     + [Lancer un jeu](#lancer-un-jeu)
     + [Arrêter le jeu en cours](#arreter-le-jeu-en-cours)
     + [Pause/Reprendre le jeu](#pausereprendre-le-jeu)
@@ -65,10 +65,10 @@ Ce dépôt vous permet d'intégrer Recalbox dans votre Home Assistant :
 - Vous devez disposer d'au moins une `Recalbox` connectée au réseau.  
   Testé pour le moment seulement sur Recalbox <mark>9.2.3</mark>, sur Raspberry Pi 3 B+.  
   Vous devez disposer du "hostname" pour accéder à la Recalbox sur le réseau, via `recalbox.local` par example.  
-  > Ses ports pour l'API (80 et 81) et ports UDP (1337 et 55355) doivent être accessibles et ouverts sur le réseau local (ce qui est le cas par default sur le Recalbox).
+  > Ses ports pour l'API (80 et 81) et ports UDP (1337 et 55355) doivent être accessibles et ouverts sur le réseau local (ce qui est le cas par default sur la Recalbox).
 
 
-- Vous devez disposer d'un `Home Assistant`.  
+- Vous devez disposer d'un `Home Assistant` sur le réseau.  
   Testé sur Home Assistant <mark>2026.1</mark>, <mark>2026.2</mark>, sur Raspberry Pi 3 B+.  
   Doit être sur le même réseau, accessible par défaut via `homeassistant.local`
 
@@ -80,7 +80,7 @@ Ce dépôt vous permet d'intégrer Recalbox dans votre Home Assistant :
 ### Recalbox vers Home Assistant
 
 Sur la Recalbox, un script écoute les événements locaux, selon la documentation [Scripts sur événements d'EmulationStation | Recalbox Wiki](https://wiki.recalbox.com/fr/advanced-usage/scripts-on-emulationstation-events) .
-Le script lit les informations nécessaire sur le jeu et la Recalbox, et envoie un message MQTT à Home Assistant en JSON.
+Le script lit les informations nécessaires sur le jeu et la Recalbox, et envoie un message MQTT à Home Assistant au format JSON.
 Home Assistant va alors mettre à jour son entité "Recalbox" avec les informations reçues.
 
 > Les attributs reçus par Home Assistant (dans le JSON) sont :
@@ -95,6 +95,12 @@ Home Assistant va alors mettre à jour son entité "Recalbox" avec les informati
 > - `hardware` : Appareil sur lequel tourne Recalbox
 > - `scriptVersion` : Version du script d'intégration sh qui tourne sur la Recalbox
 
+Depuis la version v1.4.0 de l'intégration, on peut avoir plusieurs Recalbox sur le même réseau :
+- (v1.4.1 ou suivantes) Si on a une seule Recalbox déclarée dans Home Assistant, alors on considèrera que tous les messages MQTT sont pour elle
+- Sinon, on regarde alors si l'IP du message correspond à l'IP reçue du coordinateur par mDNS (cela peut donc prendre 30sec après le démarrage de la Recalbox, pour avoir son IP et pouvoir lire ses messages...)
+- Sinon, on estime que le message est pour une autre Recalbox
+
+
 ### Home Assistant vers Recalbox
 
 Depuis Home Assistant, les ordre sont envoyés à la Recalbox par API et commandes UDP :
@@ -102,7 +108,7 @@ Depuis Home Assistant, les ordre sont envoyés à la Recalbox par API et command
 - Liste des jeux d'une console par API
 - Lancer un jeu par commande UDP
 
-Les intégration des phrases Assist pour le texte/ la voix ont aussi été implémentés
+Les intégrations des phrases Assist pour le texte/ la voix ont aussi été implémentés
 pour le contrôle, la demande d'informations, ou cherche le jeu à lancer. Les commandes
 lancées par Assist utilisent les mêmes commandes que listées ci-dessus.
 
@@ -187,25 +193,25 @@ Exemple : tous les boutons visibles, alerte de mises à jour activées, afficher
 
 ### Automatisations
 
-You can also create automations, triggered when a game is launched for example.  
-If interested in this example, copy [recalbox_automations.yaml](Home%20Assistant/automations/recalbox_automations.yaml) into `/config/automations/recalbox_automations.yaml`
-and then add
+Vous pouvez créer des automatisations, déclenchées par exemple lorsqu'un jeu est lancé.  
+Si cet exemple vous intéresse, copiez [recalbox_automations.yaml](Home%20Assistant/automations/recalbox_automations.yaml) dans `/config/automations/recalbox_automations.yaml`
+puis ajoutez
 ```yaml
 automation: !include automations.yaml
 automation yaml: !include_dir_merge_list automations/
 ```
-in `configuration.yaml`, to allow Home Assistant to read yaml files in `automations` subfolder.
+dans `configuration.yaml`, pour permettre à Home Assistant de lire les fichiers yaml du dossier `automations`.
 
 
 ### Assist (texte/voix)
 
-> Since v0.2.0, a script auto installs the sentences and sentences updates.
-> Check the dashboard custom card to see if the HA needs a restarts to update the sentences.
+> Depuis la version v0.2.0, un script va automatiquement installer les phrases Assist au bon endroit, et ses mises à jour.
+> Vérifiez la carte du tableau de bord si un redémarrage manuel est nécessaire.
 
 
-#### Get current game
+#### Savoir quel est le jeu en cours
 
-Examples :
+Exemples :
   - "What's the current game on Recalbox?"
   - "Which game is running on the Recalbox?"
   - "Quel est le jeu en cours [sur recalbox]"
@@ -219,7 +225,7 @@ Examples :
 
 #### Lancer un jeu
 
-Examples :
+Exemples :
   - "Launch Sonic 3 on megadrive"
   - "Run Final Fantasy on Playstation"
   - "Start Mario on Nintendo 64 on Recalbox"
@@ -232,14 +238,14 @@ Examples :
 
   ![](docs/launchGame.png)
 
-> The search ignores case, and can find roms with words in between your search.
-> Example : Searching for "Pokemon Jaune", can find the rom "Pokemon - Version Jaune - Edition Speciale Pikachu".
+> La recherche est insensible à la casse, et peut trouver des roms ayant des mots entre vos termes.
+> Exemple : Si vous recherchez "Pokemon Jaune", on peut trouver la rom "Pokemon - Version Jaune - Edition Speciale Pikachu".
 
 
 #### Arrêter le jeu en cours
 
 
-Examples :
+Exemples :
   - "Quit the current game"
   - "Stop the game on Recalbox"
   - "Arrête le jeu en cours sur Recalbox"
@@ -249,7 +255,7 @@ Examples :
 #### Pause/Reprendre le jeu
 
 
-Examples :
+Exemples :
   - "Pause the current game"
   - "Resume the game on Recalbox"
   - "Mets le jeu en pause"
@@ -257,24 +263,24 @@ Examples :
 
 #### Faire une capture d'écran
 
-You can make a game screenshot, simply pushing the screenshot button on your dashboard.  
-You can also make a screenshot via Assist. 
+Vous pouvez faire un screenshot en cliquant simplement sur le bouton correspondant sur le tableau de bord.  
+Vous pouvez aussi faire un screenshot par une demande sur Assist. 
 
-Examples :
+Exemples :
   - "Take a screenshot of the game"
   - "Make a game screen shot"
   - "Prends une capture d'écran du jeu"
   - "Fais un screenshot du jeu"
 
-> We try doing the screenshot in two ways :
-> - trying first a UDP command screenshot, which is more integrated
-> - if fails because of wrong port, then it tries using API.  
->   Note about API : on Recalbox 9.2.3 or Raspberry Pi 3, the screenshots via API are broken (also in the Recalbox Web Manager). That's why I chose UDP first.
+> On essaye de faire la capture de deux moyens :
+> - d'abord par une commande UDP, qui est mieux intégrée
+> - en cas d'échec (mauvais port?), alors on essaye par un appel à l'API.  
+>   Note à propos de l'API : sur Recalbox 9.2.3 sur Raspberry Pi 3, la capture par l'API donne des images "cassées" (tout comme par le Web Manager Recalbox). C'est pour cela qu'on essaye d'abord la version UDP.
 
 
 #### Enregistrer la partie
 
-Examples :
+Exemples :
 - "Save the current game"
 - "Save my game state on Recalbox"
 - "Enregistre la partie en cours"
@@ -284,7 +290,7 @@ Examples :
 
 #### Charger la partie
 
-Examples :
+Exemples :
 - "Load my last game state"
 - "Load the last save"
 - "Recharge ma sauvegarde du jeu"
@@ -293,11 +299,11 @@ Examples :
 
 #### Turn OFF recalbox
 
-> This uses the Home Assistant intent to turn OFF the Recalbox, recognized as a switch.
-> Please ensure that you give an easy name of your Recalbox Entity, to help
-> Home Assistant Assist to recognize the device you want to turn OFF.
+> Cet ordre utilise les intentions natives de Home Assistant, pour éteindre la Recalbox, reconnue comme un interrupteur.
+> Assurez-vous donc d'avoir donné un nom prononçable à votre entité Recalbox, pour faciliter la compréhension par
+> Home Assistant de quel objet vous voulez éteindre.
 
-Examples :
+Exemples :
 - "Turn off Recalbox"
 - "Eteins Recalbox"
 
@@ -311,18 +317,22 @@ Consultez [le fichier des notes de versions](CHANGELOG.md)
 ## Aides
 
 ### Problème de lancement du script Recalbox, à cause du `CRLF` / `LF` 
-If your Recalbox doesn't seem to reach Home Assistant, while you have your script in `userscripts`,
-please make sure the `.sh` file is using "LF" line separator :
-- You can run via SSH `sh <path-to-the-script>` :  
-  if there are errors saying "\r" is invalid, it means
-  your sh file line separators have been modified, while it must not.
-- Or you can simply open the .sh file in a compatible editor, like your IDE, or Notepad++,
-  and check on the bottom right corner if it is shown `CRLF` (wrong) or `LF` (good).  
+Si votre Recalbox ne semble pas communiquer avec Home Assistant alors que
+votre script est bien présent dans userscripts, veuillez vous assurer que le fichier `.sh`
+utilise le séparateur de ligne "LF" :
 
-If you downloaded the file with git on windows, the line separator could have been automatically 
-changed to CRLF, while Recalbox script only accepts LF.
-In that case, type `git config --global core.autocrlf input` in command line, to make sure that 
-git keeps the "LF" as it was in the file, without changing it.
+- Vous pouvez tester via SSH en lançant `sh <path-to-the-script>` :  
+  si des erreurs indiquent que "\r" est invalide,
+  cela signifie que les séparateurs de ligne de votre fichier ont été
+  modifiés, ce qui ne doit pas arriver.
+- Vous pouvez aussi simplement ouvrir le fichier `.sh` dans un éditeur compatible,
+  comme votre IDE ou Notepad++, et vérifier dans le coin inférieur droit s'il affiche
+  `CRLF` (incorrect) ou `LF` (correct).
 
-Also, make sure that you are using the latest script version.
-If your script version is too old, a message will be shown in your Recalbox Card.
+Si vous avez téléchargé le fichier via Git sous Windows, le séparateur de ligne a pu être automatiquement
+remplacé par CRLF, alors que le script Recalbox n'accepte que le LF.
+Dans ce cas, tapez `git config --global core.autocrlf input` dans votre terminal,
+pour vous assurer que Git conserve le format "LF" d'origine sans le modifier.
+
+Enfin, assurez-vous d'utiliser la dernière version du script.
+Si votre version est trop ancienne, un message s'affichera sur votre carte Recalbox dans Home Assistant.

@@ -95,6 +95,12 @@ Home Assistant can then update its "Recalbox" entity with the current game.
 > - `hardware` : Device running the Recalbox
 > - `scriptVersion` : Version of the integration script in the Recalbox
 
+Since the version v1.4.0, we can manage many Recalbox in the same network :
+- (v1.4.1 and nexts) If only one Recalbox is declared in Home Assistant, all the MQTT messages will be for this one
+- Else, we check if the IP from the incoming message matches the Recalbox IP address got with mDNS (it can takes up to 30sec after Recalbox starts, to get its IP address and then receive its messages...)
+- Else, this message if for an other Recalbox
+
+
 ### Home Assistant to Recalbox
 
 On Home Assistant, orders are sent to Recalbox via API and UDP commands :
@@ -268,7 +274,7 @@ Examples :
 > We try doing the screenshot in two ways :
 > - trying first a UDP command screenshot, which is more integrated
 > - if fails because of wrong port, then it tries using API.  
->   Note about API : on Recalbox 9.2.3 or Raspberry Pi 3, the screenshots via API are broken (also in the Recalbox Web Manager). That's why I chose UDP first.
+>   Note about API : on Recalbox 9.2.3 on Raspberry Pi 3, the screenshots via API are broken (also in the Recalbox Web Manager). That's why I chose UDP first.
 
 
 #### Save current game state
@@ -315,7 +321,7 @@ please make sure the `.sh` file is using "LF" line separator :
 - You can run via SSH `sh <path-to-the-script>` :  
   if there are errors saying "\r" is invalid, it means
   your sh file line separators have been modified, while it must not.
-- Or you can simply open the .sh file in a compatible editor, like your IDE, or Notepad++,
+- Or you can simply open the `.sh` file in a compatible editor, like your IDE, or Notepad++,
   and check on the bottom right corner if it is shown `CRLF` (wrong) or `LF` (good).  
 
 If you downloaded the file with git on windows, the line separator could have been automatically 
