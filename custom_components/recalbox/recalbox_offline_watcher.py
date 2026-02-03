@@ -37,7 +37,7 @@ async def prepare_ping_coordinator(hass, api:RecalboxAPI) -> DataUpdateCoordinat
             if success:
                 try:
                   async with async_timeout.timeout(5):
-                    # On demande l'IP correspondant au nom d'hôte pour la comparaison MQTT
+                    # On demande l'IP correspondant au nom d'hôte pour la comparaison éventuelle
                     resolved_ip = await hass.async_add_executor_job(
                         socket.gethostbyname, api.host
                     )
