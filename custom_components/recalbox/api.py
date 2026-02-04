@@ -69,7 +69,7 @@ class RecalboxAPI:
                 raise
 
 
-    async def quit_kodi(self, console) -> bool:
+    async def quit_kodi(self) -> bool:
         kodi_url = f"http://{self.host}:{self.api_port_kodi}/jsonrpc"
         payload = {
             "jsonrpc": "2.0",
