@@ -57,6 +57,7 @@ const TRANSLATIONS = {
         "showLoadGameButton": "Restaurer le dernier point de sauvegarde par UDP (équivalent à HK + X)",
         "showSaveGameButton": "Créer un point de sauvegarde par UDP (équivalent à HK + Y)",
         "showQuitGameButton": "Quitter le jeu en cours par UDP (retour au menu)",
+        "showQuitKodiButton": "Permet de quitter Kodi si celui-ci est lancé, par exemple au démarrage de la Recalbox."
     },
   },
   "en": {
@@ -114,7 +115,8 @@ const TRANSLATIONS = {
         "showPauseGameButton": "Pause/resume the current emulator (via UDP)",
         "showLoadGameButton": "Restore the last save point via UDP (equivalent to HK + X)",
         "showSaveGameButton": "Create a save point via UDP (equivalent to HK + Y)",
-        "showQuitGameButton": "Quit the current game via UDP (return to menu)"
+        "showQuitGameButton": "Quit the current game via UDP (return to menu)",
+        "showQuitKodiButton": "Show quit Kodi button, when running, for example on your Recalbox startup."
     },
   }
 };
@@ -327,7 +329,7 @@ class RecalboxCard extends HTMLElement {
       this.actions.innerHTML = `
         <div class="action-button" id="btn-power-off" ` + ((showTurnOffButton) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:power"></ha-icon>${i18n.buttons.shutdown}</div>
         <div class="action-button" id="btn-reboot" ` + ((showRebootButton) ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:restart"></ha-icon>${i18n.buttons.reboot}</div>
-        <div class="action-button" id="btn-reboot" ` + ((showQuitKodiButton && consoleName=='Kodi') ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:kodi"></ha-icon>${i18n.buttons.quit_kodi}</div>
+        <div class="action-button" id="btn-quit-kodi" ` + ((showQuitKodiButton && consoleName=='Kodi') ? '' : 'style="display:none"')+ `><ha-icon icon="mdi:kodi"></ha-icon>${i18n.buttons.quit_kodi}</div>
 
         <div class="action-button no-gap" ` + (isAGameRunning ? '' : 'style="display:none"')+ `>
             ${i18n.game} &nbsp;

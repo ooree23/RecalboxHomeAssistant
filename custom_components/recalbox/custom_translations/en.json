@@ -63,7 +63,8 @@
       "Quiting Kodi !"
     ],
     "quit_kodi_failed": [
-      "Cannot exit Kodi !"
+      "Cannot exit Kodi ! It is maybe not running...",
+      "Kodi doesn't seem to be running..."
     ]
   },
   "errors": {
