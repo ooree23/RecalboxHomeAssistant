@@ -3,7 +3,7 @@
 > By Aurélien Tomassini, 2026.
 
 
-## v1.5.1 - 
+## v1.5.1 - 04/02/2026 - Can now quit Kodi from HA
 
 
 - If multiple Recalbox entities are matching to the same Recabox (example, one is "recalbox.local" and one is "192.168.1.X", both for the same device)
