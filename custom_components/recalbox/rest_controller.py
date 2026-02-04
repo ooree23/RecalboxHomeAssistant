@@ -14,6 +14,7 @@ class RecalboxRestController(HomeAssistantView):
 
     def __init__(self, hass):
         self.hass = hass
+        _LOGGER.debug(f"Create an API endpoint to {self.url}, to received the Recalbox messages")
 
 
     async def post(self, request, hostname):

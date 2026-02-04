@@ -3,10 +3,12 @@
 > By Aurélien Tomassini, 2026.
 
 
-## v1.4.2 - 
+## v1.5.0 - 
 
+> Major changes, please upload the new Recalbox script to Recalbox `userscripts` folder.
 
-- ...
+- Remove MQTT dependency, for a lighter architecture : Recalbox now sends its data to an API instead of MQTT.
+  The installation is now way easier for customers : no MQTT broker to install, no user, nothing.
 
 
 ## v1.4.1 - 03/02/2026
