@@ -3,10 +3,11 @@
 > By Aurélien Tomassini, 2026.
 
 
-## v1.5.3 - ...
+## v1.5.3 - 05/02/2026
 
 
 - In the Recalbox card, hide "Web manager" link if Recalbox is off, or if Kodi is running (because API maybe not running yet)
+- Fix regression stopping current game by Assists intent
 
 
 ## v1.5.2 - 05/02/2026
