@@ -70,7 +70,6 @@ class RecalboxEntity(CoordinatorEntity, SwitchEntity, RestoreEntity):
 
     def _handle_coordinator_update(self) -> None:
         """Géré à chaque rafraîchissement du coordinateur (ping)."""
-        _LOGGER.debug("_handle_coordinator_update")
         is_alive = self.coordinator.data.get("is_alive_smoothed")
         if is_alive and not self._attr_is_on:
             _LOGGER.debug("Le coordinateur détecte un ping OK alors que l'état est OFF. Lancement du Pull API.")
