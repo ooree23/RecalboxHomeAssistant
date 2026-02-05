@@ -21,6 +21,7 @@ async def async_setup_intents(hass):
         RecalboxLaunchHandler(),
         RecalboxStatusHandler(),
         RecalboxQuitGameHandler(),
+        RecalboxQuitKodiHandler(),
         RecalboxPauseGameHandler(),
         RecalboxScreenshotHandler(),
         RecalboxLoadStateHandler(),
@@ -153,7 +154,7 @@ class RecalboxQuitGameHandler(intent.IntentHandler):
 
 
 
-class RecalboxQuitGameHandler(intent.IntentHandler):
+class RecalboxQuitKodiHandler(intent.IntentHandler):
     intent_type = "RecalboxQuitKodi"
 
     async def async_handle(self, intent_obj):

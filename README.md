@@ -71,7 +71,7 @@ This repository allows you to integrate Recalbox in your Home Assistant :
 
 
 - You should have a `Home Assistant`.  
-  Tested on Home Assistant <mark>2026.1</mark>, Raspberry Pi 3 B+.  
+  Tested on Home Assistant <mark>2026.1</mark>, <mark>2026.2</mark>, on Raspberry Pi 3 B+.  
   By default, It should be accessible in the same network, at `homeassistant.local`
 
 
@@ -330,8 +330,11 @@ When your Home Assistants resolves the hostname of your Recalbox, it can use IPv
 It seems to have some troubles (at least on RPi3), so Recalbox doesn't receive the requests from Home Assistant.
 A toast is shown in Home Assistant showing an IPv6 address.
 
-If it occures too often, go to your integration settings, and change your hostname to the IP address v4.
-It will fix this issue, but if your router changes your IP address, you will have to change it again.
-
 > Version v1.5.0 forces now to use IPv4.  
 > This issue should not happen again. If it does again, disable IPV6 in Home Assistant (Settings, Network, IPv6, disable)
+
+If it occurres too often, go to your integration settings, and change your hostname to the IP address v4.
+It will fix this issue, but if your router changes your IP address, you will have to change it again.
+
+- https://github.com/home-assistant/core/issues/161174
+- https://github.com/home-assistant/core/issues/161877
