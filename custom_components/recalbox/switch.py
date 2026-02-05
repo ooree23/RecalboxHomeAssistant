@@ -66,7 +66,7 @@ class RecalboxEntity(CoordinatorEntity, SwitchEntity, RestoreEntity):
             return False
         elif not self._attr_is_on: # la recalbox est marquée OFF mais elle répond au ping -> on essaye de faire un pull de ses infos par l'API
             _LOGGER.debug("La recalbox répond aux ping, mais était OFF. Essaye de requêter ses infos...")
-            self.pull_game_infos_from_recalbox_api()
+            self.hass.async_create_task(self.pull_game_infos_from_recalbox_api())
             return False
         else :
             return self._attr_is_on
